@@ -98,12 +98,12 @@ Present your analysis in this format:
 ```
 === Task Delegation Analysis ===
 
-LOCAL TASKS (handle in this session):
-  1. [Task description] — Reason: [why this is local]
-  2. ...
-
 REMOTE TASKS (delegate to Devin):
   1. [Task description] — Reason: [why this needs a full session]
+  2. ...
+
+LOCAL TASKS (handle in this session):
+  1. [Task description] — Reason: [why this is local]
   2. ...
 
 Summary: X local / Y remote tasks identified.
@@ -111,13 +111,9 @@ Summary: X local / Y remote tasks identified.
 
 Ask the user to confirm before proceeding. If the user disagrees with any classification, adjust accordingly.
 
-## Step 5: Execute LOCAL Tasks
+## Step 5: Create Remote Devin Sessions for REMOTE Tasks
 
-For each LOCAL task, execute it directly. Use the available tools (read, grep, glob, exec) to complete the work in this session. Report results as you go.
-
-## Step 6: Create Remote Devin Sessions for REMOTE Tasks
-
-For each REMOTE task, create a new Devin session using the API. Construct a detailed prompt for each session that includes the specific task and relevant repository context.
+For each REMOTE task, create a new Devin session using the API. Construct a detailed prompt for each session that includes the specific task and relevant repository context. **Use subagents to kick off multiple remote sessions in parallel whenever possible** — each session creation is independent and can be dispatched concurrently.
 
 Use this `curl` command pattern for each remote task:
 
@@ -155,6 +151,10 @@ Each prompt sent to the remote Devin session MUST include:
 
 Example prompt for a remote session:
 > "In the COG-GTM/monolith-enterprise-application repo, add a new REST endpoint for managing Departments. Follow the existing hexagonal architecture pattern used by Employee, Client, and Project entities. This includes: 1) Domain model (src/main/java/.../domain/model/Department.java), 2) Repository interface + impl, 3) Service interface + impl, 4) DAO interface + impl using Hibernate, 5) REST endpoint + resource + mapper, 6) DTO + converter for messaging, 7) Unit tests following the existing *UTest.java pattern. Reference EmployeeRestEndpoint.java and EmployeeServiceImpl.java as examples. All existing tests must continue to pass (mvn test)."
+
+## Step 6: Execute LOCAL Tasks
+
+For each LOCAL task, execute it directly. Use the available tools (read, grep, glob, exec) to complete the work in this session. **Use subagents to handle independent local tasks in parallel** — tasks that don't depend on each other's output can run concurrently. Report results as you go.
 
 ## Step 7: Report Results
 
