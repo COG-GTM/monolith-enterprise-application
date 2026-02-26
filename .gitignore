@@ -35,3 +35,7 @@ target/*
 ehthumbs.db
 Thumbs.db
 /target/
+
+# Environment files #
+#####################
+.env
