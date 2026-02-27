@@ -18,7 +18,6 @@ public class UserResourceMapperUTest {
 
         int userId = 1;
         String username = "Username";
-        String password = "Password1";
         String email = "Email";
         String firstName = "Firstname";
         String secondName = "SecondName";
@@ -26,7 +25,6 @@ public class UserResourceMapperUTest {
         UserResource userResource = new UserResource();
         userResource.setUserId(userId);
         userResource.setUsername(username);
-        userResource.setPassword(password);
         userResource.setEmail(email);
         userResource.setFirstName(firstName);
         userResource.setSecondName(secondName);
@@ -35,7 +33,6 @@ public class UserResourceMapperUTest {
 
         assertEquals(userId, user.getUserId());
         assertEquals(username, user.getUsername());
-        assertEquals(password, user.getPassword());
         assertEquals(email, user.getEmail());
         assertEquals(firstName, user.getFirstname());
         assertEquals(secondName, user.getLastname());
@@ -46,7 +43,6 @@ public class UserResourceMapperUTest {
     public void testMapUserToUserResource(){
         int userId = 1;
         String username = "Username";
-        String password = "Password1";
         String email = "Email";
         String firstName = "Firstname";
         String secondName = "SecondName";
@@ -54,7 +50,6 @@ public class UserResourceMapperUTest {
         User user = new User();
         user.setUserId(userId);
         user.setUsername(username);
-        user.setPassword(password);
         user.setEmail(email);
         user.setFirstname(firstName);
         user.setLastname(secondName);
@@ -63,7 +58,6 @@ public class UserResourceMapperUTest {
 
         assertEquals(userId, userResource.getUserId());
         assertEquals(username, userResource.getUsername());
-        assertEquals(password, userResource.getPassword());
         assertEquals(email, userResource.getEmail());
         assertEquals(firstName, userResource.getFirstName());
         assertEquals(secondName, userResource.getSecondName());

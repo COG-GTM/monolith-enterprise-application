@@ -36,7 +36,6 @@ public class UserDaoImpl implements UserDao {
                 user.setFirstname(rs.getString("firstname"));
                 user.setLastname(rs.getString("lastname"));
                 user.setUsername(rs.getString("username"));
-                user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
                 return user;
             }
@@ -45,8 +44,12 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void saveUser(User user) {
-        // TODO implement
-        throw new RuntimeException("Not Yet Implemented");
+        jdbcTemplate.update(
+            "INSERT INTO user (id, username, email, firstname, secondname) VALUES (?, ?, ?, ?, ?) " +
+            "ON DUPLICATE KEY UPDATE username=?, email=?, firstname=?, secondname=?",
+            user.getUserId(), user.getUsername(), user.getEmail(), user.getFirstname(), user.getLastname(),
+            user.getUsername(), user.getEmail(), user.getFirstname(), user.getLastname()
+        );
     }
 
     @Override
