@@ -9,19 +9,23 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <spring.version>[4.3.18,)</spring.version>
+        <spring.version>4.3.30.RELEASE</spring.version>
+        <spring.security.version>4.2.13.RELEASE</spring.security.version>
+        <auth0.java-jwt.version>3.19.4</auth0.java-jwt.version>
+        <auth0.mvc-auth-commons.version>1.9.5</auth0.mvc-auth-commons.version>
+        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <junit.version>4.13.1</junit.version>
         <java.version>1.7</java.version>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.7.3</powermock.version>
-        <jetty.version>[9.4.11.v20180605,)</jetty.version>
+        <jetty.version>9.4.54.v20240208</jetty.version>
         <jaxrs.version>2.0</jaxrs.version>
         <bean.validation.version>2.0.0.Final</bean.validation.version>
         <expression.language.version>3.0.0</expression.language.version>
         <glassfish.expression.language>2.2.6</glassfish.expression.language>
         <hibernate.validator.version>5.4.2.Final</hibernate.validator.version>
         <apache.commons-lang3.version>3.6</apache.commons-lang3.version>
-        <jackson.databind.version>[2.8.11.1,)</jackson.databind.version>
+        <jackson.databind.version>2.13.5</jackson.databind.version>
         <hyperSql.version>2.3.2</hyperSql.version>
         <h2.version>2.1.210</h2.version>
         <derby.version>10.11.1.1</derby.version>
@@ -246,6 +250,40 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <!-- Spring Security -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
+        <!-- Auth0 Spring Security SDK -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>mvc-auth-commons</artifactId>
+            <version>${auth0.mvc-auth-commons.version}</version>
+        </dependency>
+
+        <!-- JWT validation -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${auth0.java-jwt.version}</version>
+        </dependency>
+
+        <!-- Servlet API (provided by Jetty at runtime) -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet-api.version}</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

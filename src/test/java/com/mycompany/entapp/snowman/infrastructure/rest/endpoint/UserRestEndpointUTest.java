@@ -41,7 +41,6 @@ public class UserRestEndpointUTest {
         UserResource userResource = new UserResource();
         userResource.setUserId(1);
         userResource.setUsername("Username");
-        userResource.setPassword("Password");
         userResource.setFirstName("Firstname");
         userResource.setSecondName("Secondname");
         userResource.setEmail("Email");
@@ -66,7 +65,6 @@ public class UserRestEndpointUTest {
         User user = new User();
         user.setUserId(1);
         user.setUsername("Username");
-        user.setPassword("Password");
         user.setFirstname("Firstname");
         user.setLastname("Lastname");
         user.setEmail("Email");
@@ -88,7 +86,6 @@ public class UserRestEndpointUTest {
         User user = new User();
         user.setUserId(1);
         user.setUsername("Username");
-        user.setPassword("Password");
         user.setFirstname("Firstname");
         user.setLastname("Lastname");
         user.setEmail("Email");
