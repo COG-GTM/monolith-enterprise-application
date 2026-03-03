@@ -9,7 +9,6 @@ import com.mycompany.entapp.snowman.domain.model.Project;
 import com.mycompany.entapp.snowman.domain.service.ProjectService;
 import com.mycompany.entapp.snowman.infrastructure.rest.mappers.ProjectResourceMapper;
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.ProjectResource;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -41,7 +40,8 @@ public class ProjectRestEndpointUTest {
         ProjectResource projectResource = new ProjectResource();
         projectResource.setProjectId(1);
         projectResource.setTitle("Title");
-        projectResource.setDateStarted(new DateTime(2018, 1,1, 12, 0, 0).toDate());
+        // Java 8: Migrated from Joda-Time DateTime to java.time.LocalDate
+        projectResource.setDateStarted(java.time.LocalDate.of(2018, 1, 1));
 
         Mockito.doNothing().when(projectService).createProject(Matchers.any(Project.class));
 
@@ -84,7 +84,8 @@ public class ProjectRestEndpointUTest {
         ProjectResource projectResource = new ProjectResource();
         projectResource.setProjectId(1);
         projectResource.setTitle("Title");
-        projectResource.setDateStarted(new DateTime(2018, 1,1, 12, 0, 0).toDate());
+        // Java 8: Migrated from Joda-Time DateTime to java.time.LocalDate
+        projectResource.setDateStarted(java.time.LocalDate.of(2018, 1, 1));
 
         Mockito.doNothing().when(projectService).createProject(Matchers.any(Project.class));
 

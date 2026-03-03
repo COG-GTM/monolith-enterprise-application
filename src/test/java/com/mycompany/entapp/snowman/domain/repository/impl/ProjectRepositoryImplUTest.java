@@ -8,7 +8,6 @@ package com.mycompany.entapp.snowman.domain.repository.impl;
 import com.mycompany.entapp.snowman.domain.ProjectTestHelper;
 import com.mycompany.entapp.snowman.domain.model.Project;
 import com.mycompany.entapp.snowman.infrastructure.db.dao.ProjectDao;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

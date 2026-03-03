@@ -5,14 +5,15 @@
  */
 package com.mycompany.entapp.snowman.infrastructure.rest.resources;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class ProjectResource {
 
     private int projectId;
     private String title;
-    private Date dateStarted;
-    private Date dateEnded;
+    // Java 8: Migrated from java.util.Date to java.time.LocalDate
+    private LocalDate dateStarted;
+    private LocalDate dateEnded;
 
     public int getProjectId() {
         return projectId;
@@ -30,19 +31,19 @@ public class ProjectResource {
         this.title = title;
     }
 
-    public Date getDateStarted() {
+    public LocalDate getDateStarted() {
         return dateStarted;
     }
 
-    public void setDateStarted(Date dateStarted) {
+    public void setDateStarted(LocalDate dateStarted) {
         this.dateStarted = dateStarted;
     }
 
-    public Date getDateEnded() {
+    public LocalDate getDateEnded() {
         return dateEnded;
     }
 
-    public void setDateEnded(Date dateEnded) {
+    public void setDateEnded(LocalDate dateEnded) {
         this.dateEnded = dateEnded;
     }
 }

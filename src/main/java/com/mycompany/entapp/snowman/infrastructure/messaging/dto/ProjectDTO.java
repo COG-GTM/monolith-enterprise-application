@@ -10,14 +10,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 public class ProjectDTO implements Serializable {
 
     private int projectId;
     private String projectTitle;
-    private Date dateStarted;
-    private Date dateEnded;
+    // Java 8: Migrated from java.util.Date to java.time.LocalDate
+    private LocalDate dateStarted;
+    private LocalDate dateEnded;
 
     public int getProjectId() {
         return projectId;
@@ -35,19 +36,19 @@ public class ProjectDTO implements Serializable {
         this.projectTitle = projectTitle;
     }
 
-    public Date getDateStarted() {
+    public LocalDate getDateStarted() {
         return dateStarted;
     }
 
-    public void setDateStarted(Date dateStarted) {
+    public void setDateStarted(LocalDate dateStarted) {
         this.dateStarted = dateStarted;
     }
 
-    public Date getDateEnded() {
+    public LocalDate getDateEnded() {
         return dateEnded;
     }
 
-    public void setDateEnded(Date dateEnded) {
+    public void setDateEnded(LocalDate dateEnded) {
         this.dateEnded = dateEnded;
     }
 

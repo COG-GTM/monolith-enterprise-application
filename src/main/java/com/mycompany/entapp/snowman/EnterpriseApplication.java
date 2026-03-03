@@ -38,17 +38,15 @@ public class EnterpriseApplication {
         server.setHandler(webAppContext);
         server.start();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (server.isStarted()) {
-                    server.setStopAtShutdown(true);
+        // Java 8: Lambda expression replaces anonymous Runnable
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (server.isStarted()) {
+                server.setStopAtShutdown(true);
 
-                    try {
-                        server.stop();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    server.stop();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
             }
         }));

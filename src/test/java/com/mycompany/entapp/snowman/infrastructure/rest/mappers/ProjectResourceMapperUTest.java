@@ -7,10 +7,9 @@ package com.mycompany.entapp.snowman.infrastructure.rest.mappers;
 
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.ProjectResource;
 import com.mycompany.entapp.snowman.domain.model.Project;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -19,8 +18,9 @@ public class ProjectResourceMapperUTest {
 
     @Test
     public void testMapToProject() throws Exception {
-        Date dateStarted = new DateTime(2018,1,1,0,0,0).toDate();
-        Date dateEnded = new DateTime(2018,5,1,0,0,0).toDate();
+        // Java 8: Migrated from Joda-Time DateTime to java.time.LocalDate
+        LocalDate dateStarted = LocalDate.of(2018, 1, 1);
+        LocalDate dateEnded = LocalDate.of(2018, 5, 1);
 
         ProjectResource projectResource = new ProjectResource();
         projectResource.setProjectId(1);
@@ -40,8 +40,9 @@ public class ProjectResourceMapperUTest {
     public void testMapToProjectResource() throws Exception {
         int projectId = 1;
         String projectTitle = "Project Title";
-        Date dateStarted = new DateTime(2018,1,1,0,0,0).toDate();
-        Date dateEnded = new DateTime(2018,5,1,0,0,0).toDate();
+        // Java 8: Migrated from Joda-Time DateTime to java.time.LocalDate
+        LocalDate dateStarted = LocalDate.of(2018, 1, 1);
+        LocalDate dateEnded = LocalDate.of(2018, 5, 1);
 
         Project project = new Project();
         project.setId(projectId);

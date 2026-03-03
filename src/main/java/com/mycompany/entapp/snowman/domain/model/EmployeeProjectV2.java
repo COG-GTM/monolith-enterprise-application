@@ -9,11 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "employee_project")
@@ -22,27 +20,26 @@ public class EmployeeProjectV2 implements Serializable {
     @EmbeddedId
     private EmployeeProjectId primaryKey = new EmployeeProjectId();
 
-    @Temporal(TemporalType.DATE)
+    // Java 8: Migrated from java.util.Date to java.time.LocalDate, removed @Temporal
     @Column(name = "date_started")
-    private Date dateStarted;
+    private LocalDate dateStarted;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "date_ended")
-    private Date dateEnded;
+    private LocalDate dateEnded;
 
-    public Date getDateStarted() {
+    public LocalDate getDateStarted() {
         return dateStarted;
     }
 
-    public void setDateStarted(Date dateStarted) {
+    public void setDateStarted(LocalDate dateStarted) {
         this.dateStarted = dateStarted;
     }
 
-    public Date getDateEnded() {
+    public LocalDate getDateEnded() {
         return dateEnded;
     }
 
-    public void setDateEnded(Date dateEnded) {
+    public void setDateEnded(LocalDate dateEnded) {
         this.dateEnded = dateEnded;
     }
 
