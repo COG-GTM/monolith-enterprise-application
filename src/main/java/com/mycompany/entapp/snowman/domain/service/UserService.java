@@ -14,4 +14,8 @@ public interface UserService {
     void updateUser(User user);
 
     void deleteUser(int userId);
+
+    boolean authenticate(String username, String password);
+
+    User findByUsername(String username);
 }
