@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!-- HTTP Security Configuration -->
+    <security:http auto-config="false" use-expressions="true" create-session="stateless" entry-point-ref="restAuthenticationEntryPoint">
+        <!-- Public endpoints -->
+        <security:intercept-url pattern="/user/create" method="POST" access="permitAll"/>
+        <security:intercept-url pattern="/auth/login" method="POST" access="permitAll"/>
+
+        <!-- Protected endpoints -->
+        <security:intercept-url pattern="/user/**" access="isAuthenticated()"/>
+
+        <!-- Disable CSRF for REST API -->
+        <security:csrf disabled="true"/>
+    </security:http>
+
+    <!-- Authentication Entry Point for REST (returns 401 instead of redirect) -->
+    <bean id="restAuthenticationEntryPoint"
+          class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
+
+    <!-- Authentication Manager -->
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider user-service-ref="customUserDetailsService">
+            <security:password-encoder ref="bcryptPasswordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <!-- BCrypt Password Encoder Bean -->
+    <bean id="bcryptPasswordEncoder"
+          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <!-- Custom UserDetailsService -->
+    <bean id="customUserDetailsService"
+          class="com.mycompany.entapp.snowman.infrastructure.security.CustomUserDetailsService"/>
+
+</beans>
