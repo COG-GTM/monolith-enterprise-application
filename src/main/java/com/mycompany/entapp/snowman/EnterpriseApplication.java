@@ -38,17 +38,14 @@ public class EnterpriseApplication {
         server.setHandler(webAppContext);
         server.start();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (server.isStarted()) {
-                    server.setStopAtShutdown(true);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (server.isStarted()) {
+                server.setStopAtShutdown(true);
 
-                    try {
-                        server.stop();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    server.stop();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
             }
         }));

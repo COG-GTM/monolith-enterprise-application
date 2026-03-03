@@ -6,7 +6,10 @@
 package com.mycompany.entapp.snowman.domain;
 
 import com.mycompany.entapp.snowman.domain.model.Project;
-import org.joda.time.DateTime;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 public final class ProjectTestHelper {
 
@@ -17,8 +20,8 @@ public final class ProjectTestHelper {
         Project project = new Project();
         project.setId(1);
         project.setProjectTitle("Project");
-        project.setDateStarted(new DateTime(2018,1,1,12,0,0).toDate());
-        project.setDateEnded(new DateTime(2020,1,1,12,0,0).toDate());
+        project.setDateStarted(Date.from(LocalDateTime.of(2018, 1, 1, 12, 0, 0).atZone(ZoneId.systemDefault()).toInstant()));
+        project.setDateEnded(Date.from(LocalDateTime.of(2020, 1, 1, 12, 0, 0).atZone(ZoneId.systemDefault()).toInstant()));
         return project;
     }
 }

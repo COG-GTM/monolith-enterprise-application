@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -33,10 +32,8 @@ public class ApplicationInfoRepositoryImpl implements ApplicationInfoRepository 
     public void initialize() {
         LOGGER.info("Loading AppInfo from Database");
 
-        List<AppInfo> appInfos = applicationInfoDao.loadApplicationInfos();
-        for (AppInfo appInfo : appInfos) {
-            appInfoMap.put(appInfo.getId(), appInfo);
-        }
+        applicationInfoDao.loadApplicationInfos()
+            .forEach(appInfo -> appInfoMap.put(appInfo.getId(), appInfo));
     }
 
     @Override

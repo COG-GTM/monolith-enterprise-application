@@ -9,7 +9,6 @@ import com.mycompany.entapp.snowman.domain.model.Project;
 import com.mycompany.entapp.snowman.domain.service.ProjectService;
 import com.mycompany.entapp.snowman.infrastructure.rest.mappers.ProjectResourceMapper;
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.ProjectResource;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,6 +21,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -41,7 +43,7 @@ public class ProjectRestEndpointUTest {
         ProjectResource projectResource = new ProjectResource();
         projectResource.setProjectId(1);
         projectResource.setTitle("Title");
-        projectResource.setDateStarted(new DateTime(2018, 1,1, 12, 0, 0).toDate());
+        projectResource.setDateStarted(Date.from(LocalDateTime.of(2018, 1, 1, 12, 0, 0).atZone(ZoneId.systemDefault()).toInstant()));
 
         Mockito.doNothing().when(projectService).createProject(Matchers.any(Project.class));
 
@@ -84,7 +86,7 @@ public class ProjectRestEndpointUTest {
         ProjectResource projectResource = new ProjectResource();
         projectResource.setProjectId(1);
         projectResource.setTitle("Title");
-        projectResource.setDateStarted(new DateTime(2018, 1,1, 12, 0, 0).toDate());
+        projectResource.setDateStarted(Date.from(LocalDateTime.of(2018, 1, 1, 12, 0, 0).atZone(ZoneId.systemDefault()).toInstant()));
 
         Mockito.doNothing().when(projectService).createProject(Matchers.any(Project.class));
 

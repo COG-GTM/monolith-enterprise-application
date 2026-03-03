@@ -7,9 +7,10 @@ package com.mycompany.entapp.snowman.infrastructure.rest.mappers;
 
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.ProjectResource;
 import com.mycompany.entapp.snowman.domain.model.Project;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
@@ -19,8 +20,8 @@ public class ProjectResourceMapperUTest {
 
     @Test
     public void testMapToProject() throws Exception {
-        Date dateStarted = new DateTime(2018,1,1,0,0,0).toDate();
-        Date dateEnded = new DateTime(2018,5,1,0,0,0).toDate();
+        Date dateStarted = Date.from(LocalDateTime.of(2018, 1, 1, 0, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
+        Date dateEnded = Date.from(LocalDateTime.of(2018, 5, 1, 0, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
 
         ProjectResource projectResource = new ProjectResource();
         projectResource.setProjectId(1);
@@ -40,8 +41,8 @@ public class ProjectResourceMapperUTest {
     public void testMapToProjectResource() throws Exception {
         int projectId = 1;
         String projectTitle = "Project Title";
-        Date dateStarted = new DateTime(2018,1,1,0,0,0).toDate();
-        Date dateEnded = new DateTime(2018,5,1,0,0,0).toDate();
+        Date dateStarted = Date.from(LocalDateTime.of(2018, 1, 1, 0, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
+        Date dateEnded = Date.from(LocalDateTime.of(2018, 5, 1, 0, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
 
         Project project = new Project();
         project.setId(projectId);
