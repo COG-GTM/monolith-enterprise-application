@@ -33,16 +33,13 @@ public class ApplicationInfoDaoImpl extends AbstractJDBCDao implements Applicati
 
         List<AppInfo> appInfos = new ArrayList<>();
 
-        Statement stmt = null;
-        Connection connection = null;
+        setupDBDriver();
 
-        try {
-            setupDBDriver();
-            connection = getConnection();
-            stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(SELECT_FROM_APP_INFO_QUERY);
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(SELECT_FROM_APP_INFO_QUERY)) {
 
-            while(rs.next()) {
+            while (rs.next()) {
                 AppInfo appInfo = new AppInfo();
                 appInfo.setId(rs.getInt("id"));
                 appInfo.setVersion(rs.getString("version"));
@@ -51,19 +48,7 @@ public class ApplicationInfoDaoImpl extends AbstractJDBCDao implements Applicati
 
         } catch (SQLException e) {
             LOG.error("{}", e);
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException e) {
-                LOG.error("{}", e);
-            }
-         }
+        }
 
         return appInfos;
     }

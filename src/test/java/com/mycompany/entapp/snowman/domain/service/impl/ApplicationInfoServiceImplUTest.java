@@ -39,7 +39,7 @@ public class ApplicationInfoServiceImplUTest {
 
     @Test(expected = BusinessException.class)
     public void givenAppInfoMapIsEmtpy_whenGetAppInfo_thenThrowBusinessException() throws BusinessException {
-        Mockito.when(applicationInfoRepository.getAppInfoMap()).thenReturn(Collections.<Integer, AppInfo>emptyMap());
+        Mockito.when(applicationInfoRepository.getAppInfoMap()).thenReturn(Collections.emptyMap());
 
         classUnderTest.getAppInfo();
     }

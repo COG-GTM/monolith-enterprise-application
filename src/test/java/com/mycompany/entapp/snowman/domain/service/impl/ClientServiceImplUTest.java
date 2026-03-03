@@ -102,7 +102,7 @@ public class ClientServiceImplUTest {
         Client client = new Client();
         client.setId(1);
         client.setClientName("Client");
-        client.setProjects(Collections.<Project>emptySet());
+        client.setProjects(Collections.emptySet());
         return client;
     }
 

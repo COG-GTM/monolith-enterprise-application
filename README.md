@@ -42,13 +42,39 @@ backend web service.
 
 ### <a name="prerequisites"></a>Pre - Requisites
 
-- Java JDK 7
-- Maven
+- Java JDK 8 (1.8) or higher
+- Maven 3.x
 - MySQL
- 
- 
-1. Start up MySQL Server 
-2. run `run.sh` script
+
+#### Setup and Running
+
+1. Install Java 8 JDK (e.g. OpenJDK 8 or Amazon Corretto 8)
+2. Install Maven 3.x
+3. Start up MySQL Server
+4. Configure database connection in `src/main/resources/db/liquibase.properties`
+5. Build the project:
+   ```bash
+   mvn clean package -Dliquibase.should.run=false
+   ```
+6. Run the application:
+   ```bash
+   java -jar target/Snowman.jar
+   ```
+   Or use the `run.sh` script:
+   ```bash
+   ./run.sh
+   ```
+
+#### Java 8 Features
+
+This project has been upgraded from Java 7 to Java 8 and makes use of the following Java 8 features:
+
+- **Lambda expressions** - Used in place of anonymous inner classes (e.g. `Runnable`, `MessageCreator`, `RowMapper`)
+- **Method references** - Used for concise mapper and converter references (e.g. `ProjectResourceMapper::mapToProject`)
+- **Stream API** - Used for collection processing in converters and mappers
+- **Try-with-resources** - Used for automatic resource management in JDBC code
+- **java.time API** - Used in place of Joda-Time for date/time construction in tests
+- **Improved type inference** - Leverages Java 8 diamond operator and generic method type inference
 
 ### <a name="architecture"></a>Software Architecture
 
