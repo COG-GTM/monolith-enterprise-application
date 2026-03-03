@@ -14,11 +14,16 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class UserDaoImpl implements UserDao {
 
     private static final String GET_USER_WITH_USERID_QUERY = "SELECT * FROM user where id = ?";
+
+    private static final String GET_USER_WITH_USERNAME_QUERY = "SELECT * FROM user where username = ?";
+
+    private static final String INSERT_USER_QUERY = "INSERT INTO user (id, username, password, email, firstname, secondname) VALUES (?, ?, ?, ?, ?, ?)";
 
     private static final String DELETE_USER_WITH_USERID = "DELETE FROM user where id = ?";
 
@@ -44,9 +49,35 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public User findByUsername(String username) {
+        List results = jdbcTemplate.query(GET_USER_WITH_USERNAME_QUERY, new Object[]{username}, new RowMapper<Object>() {
+            @Override
+            public Object mapRow(ResultSet rs, int i) throws SQLException {
+                User user = new User();
+                user.setUserId(rs.getInt("id"));
+                user.setFirstname(rs.getString("firstname"));
+                user.setLastname(rs.getString("secondname"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                return user;
+            }
+        });
+        if (results.isEmpty()) {
+            return null;
+        }
+        return (User) results.get(0);
+    }
+
+    @Override
     public void saveUser(User user) {
-        // TODO implement
-        throw new RuntimeException("Not Yet Implemented");
+        jdbcTemplate.update(INSERT_USER_QUERY,
+            user.getUserId(),
+            user.getUsername(),
+            user.getPassword(),
+            user.getEmail(),
+            user.getFirstname(),
+            user.getLastname());
     }
 
     @Override
