@@ -10,6 +10,8 @@ import com.mycompany.entapp.snowman.domain.model.User;
 public interface UserDao {
     User findUser(int userId);
 
+    User findByUsername(String username);
+
     void saveUser(User user);
 
     void removeUser(int userId);

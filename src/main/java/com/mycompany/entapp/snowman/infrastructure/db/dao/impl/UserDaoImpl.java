@@ -20,6 +20,10 @@ public class UserDaoImpl implements UserDao {
 
     private static final String GET_USER_WITH_USERID_QUERY = "SELECT * FROM user where id = ?";
 
+    private static final String GET_USER_WITH_USERNAME_QUERY = "SELECT * FROM user where username = ?";
+
+    private static final String INSERT_USER_QUERY = "INSERT INTO user (id, username, password, email, firstname, secondname) VALUES (?, ?, ?, ?, ?, ?)";
+
     private static final String DELETE_USER_WITH_USERID = "DELETE FROM user where id = ?";
 
     @Autowired
@@ -44,9 +48,31 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public User findByUsername(String username) {
+        return (User) jdbcTemplate.queryForObject(GET_USER_WITH_USERNAME_QUERY, new Object[]{username}, new RowMapper<Object>() {
+            @Override
+            public Object mapRow(ResultSet rs, int i) throws SQLException {
+                User user = new User();
+                user.setUserId(rs.getInt("id"));
+                user.setFirstname(rs.getString("firstname"));
+                user.setLastname(rs.getString("secondname"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                return user;
+            }
+        });
+    }
+
+    @Override
     public void saveUser(User user) {
-        // TODO implement
-        throw new RuntimeException("Not Yet Implemented");
+        jdbcTemplate.update(INSERT_USER_QUERY,
+            user.getUserId(),
+            user.getUsername(),
+            user.getPassword(),
+            user.getEmail(),
+            user.getFirstname(),
+            user.getLastname());
     }
 
     @Override
