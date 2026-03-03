@@ -42,13 +42,27 @@ backend web service.
 
 ### <a name="prerequisites"></a>Pre - Requisites
 
-- Java JDK 7
-- Maven
+- Java JDK 8 (1.8+)
+- Maven 3.x
 - MySQL
- 
- 
-1. Start up MySQL Server 
-2. run `run.sh` script
+
+### Setup and Running
+
+1. Ensure Java 8 JDK is installed: `java -version` should show 1.8.x
+2. Ensure Maven is installed: `mvn -version`
+3. Start up MySQL Server
+4. Run database migrations: `mvn liquibase:update`
+5. Build the project: `mvn clean package`
+6. Run the application: `java -jar target/Snowman.jar`
+
+Alternatively, run the `run.sh` script which handles steps 3-6.
+
+**Note:** This project was upgraded from Java 7 to Java 8. The codebase now leverages Java 8 features including:
+- Lambda expressions (replacing anonymous inner classes)
+- Stream API (for collection processing)
+- Method references (for improved readability)
+- `java.time.LocalDate` (replacing `java.util.Date` and Joda-Time)
+- Try-with-resources (for automatic resource management)
 
 ### <a name="architecture"></a>Software Architecture
 

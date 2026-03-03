@@ -18,7 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,11 +32,12 @@ public class Project {
     @Column(name = "project_title", nullable = false, length = 20)
     private String projectTitle;
 
+    // Java 8: Migrated from java.util.Date to java.time.LocalDate
     @Column(name = "date_started", nullable = false)
-    private Date dateStarted;
+    private LocalDate dateStarted;
 
     @Column(name = "date_ended")
-    private Date dateEnded;
+    private LocalDate dateEnded;
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
@@ -64,19 +65,19 @@ public class Project {
         this.projectTitle = projectTitle;
     }
 
-    public Date getDateStarted() {
+    public LocalDate getDateStarted() {
         return dateStarted;
     }
 
-    public void setDateStarted(Date dateStarted) {
+    public void setDateStarted(LocalDate dateStarted) {
         this.dateStarted = dateStarted;
     }
 
-    public Date getDateEnded() {
+    public LocalDate getDateEnded() {
         return dateEnded;
     }
 
-    public void setDateEnded(Date dateEnded) {
+    public void setDateEnded(LocalDate dateEnded) {
         this.dateEnded = dateEnded;
     }
 

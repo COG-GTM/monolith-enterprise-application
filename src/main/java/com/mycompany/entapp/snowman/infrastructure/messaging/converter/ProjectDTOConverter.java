@@ -8,8 +8,8 @@ package com.mycompany.entapp.snowman.infrastructure.messaging.converter;
 import com.mycompany.entapp.snowman.domain.model.Project;
 import com.mycompany.entapp.snowman.infrastructure.messaging.dto.ProjectDTO;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class ProjectDTOConverter {
 
@@ -25,11 +25,10 @@ public final class ProjectDTOConverter {
         return projectDTO;
     }
 
+    // Java 8: Stream API with method reference replaces manual iteration
     public static Set<ProjectDTO> convertToProjectDTOS(Set<Project> projects) {
-        Set<ProjectDTO> projectDTOSet = new HashSet<>();
-        for (Project project : projects) {
-            projectDTOSet.add(convertToProjectDTO(project));
-        }
-        return projectDTOSet;
+        return projects.stream()
+            .map(ProjectDTOConverter::convertToProjectDTO)
+            .collect(Collectors.toSet());
     }
 }

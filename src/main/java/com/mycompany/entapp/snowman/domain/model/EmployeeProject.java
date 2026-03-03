@@ -16,7 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "employee_project")
@@ -32,11 +32,12 @@ public class EmployeeProject implements Serializable {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    // Java 8: Migrated from java.util.Date to java.time.LocalDate
     @Column(name = "date_started")
-    private Date dateStarted;
+    private LocalDate dateStarted;
 
     @Column(name = "date_ended")
-    private Date dateEnded;
+    private LocalDate dateEnded;
 
     public Employee getEmployee() {
         return employee;
@@ -54,19 +55,19 @@ public class EmployeeProject implements Serializable {
         this.project = project;
     }
 
-    public Date getDateStarted() {
+    public LocalDate getDateStarted() {
         return dateStarted;
     }
 
-    public void setDateStarted(Date dateStarted) {
+    public void setDateStarted(LocalDate dateStarted) {
         this.dateStarted = dateStarted;
     }
 
-    public Date getDateEnded() {
+    public LocalDate getDateEnded() {
         return dateEnded;
     }
 
-    public void setDateEnded(Date dateEnded) {
+    public void setDateEnded(LocalDate dateEnded) {
         this.dateEnded = dateEnded;
     }
 
