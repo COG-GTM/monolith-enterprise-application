@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -49,7 +50,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User findByUsername(String username) {
-        return (User) jdbcTemplate.queryForObject(GET_USER_WITH_USERNAME_QUERY, new Object[]{username}, new RowMapper<Object>() {
+        List results = jdbcTemplate.query(GET_USER_WITH_USERNAME_QUERY, new Object[]{username}, new RowMapper<Object>() {
             @Override
             public Object mapRow(ResultSet rs, int i) throws SQLException {
                 User user = new User();
@@ -62,6 +63,10 @@ public class UserDaoImpl implements UserDao {
                 return user;
             }
         });
+        if (results.isEmpty()) {
+            return null;
+        }
+        return (User) results.get(0);
     }
 
     @Override
