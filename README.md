@@ -42,13 +42,23 @@ backend web service.
 
 ### <a name="prerequisites"></a>Pre - Requisites
 
-- Java JDK 7
+- Java JDK 8
 - Maven
 - MySQL
  
  
-1. Start up MySQL Server 
-2. run `run.sh` script
+1. Install Java 8 JDK (e.g. OpenJDK 8 or Amazon Corretto 8)
+2. Install Maven 3.x
+3. Start up MySQL Server
+4. Configure database connection properties in `src/main/resources` as needed
+5. Run `run.sh` script, or build and run manually:
+
+```bash
+mvn clean package -DskipTests -Dliquibase.should.run=false
+java -jar target/Snowman.jar
+```
+
+The application will start on port 8090 by default. Override with `-Dport=<port>`.
 
 ### <a name="architecture"></a>Software Architecture
 

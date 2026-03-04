@@ -12,8 +12,8 @@ import com.mycompany.entapp.snowman.infrastructure.messaging.dto.EmployeeDTO;
 import com.mycompany.entapp.snowman.infrastructure.messaging.dto.ProjectDTO;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class EmployeeDTOConverter {
     private EmployeeDTOConverter() {
@@ -33,11 +33,8 @@ public final class EmployeeDTOConverter {
     }
 
     private static Set<Project> getProjectForEmployee(Employee employee) {
-        Set<Project> projects = new HashSet<>();
-        Set<EmployeeProject> employeeProjects = employee.getProjects();
-        for (EmployeeProject employeeProject : employeeProjects) {
-            projects.add(employeeProject.getProject());
-        }
-        return projects;
+        return employee.getProjects().stream()
+            .map(EmployeeProject::getProject)
+            .collect(Collectors.toSet());
     }
 }
