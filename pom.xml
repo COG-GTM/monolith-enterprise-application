@@ -9,31 +9,31 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <spring.version>[4.3.18,)</spring.version>
-        <junit.version>4.13.1</junit.version>
-        <java.version>1.7</java.version>
-        <mockito.version>1.10.19</mockito.version>
-        <powermock.version>1.7.3</powermock.version>
-        <jetty.version>[9.4.11.v20180605,)</jetty.version>
-        <jaxrs.version>2.0</jaxrs.version>
-        <bean.validation.version>2.0.0.Final</bean.validation.version>
+        <spring.version>5.3.39</spring.version>
+        <junit.version>4.13.2</junit.version>
+        <java.version>21</java.version>
+        <mockito.version>5.11.0</mockito.version>
+        <jetty.version>9.4.54.v20240208</jetty.version>
+        <jaxrs.version>2.1.1</jaxrs.version>
+        <bean.validation.version>2.0.1.Final</bean.validation.version>
         <expression.language.version>3.0.0</expression.language.version>
-        <glassfish.expression.language>2.2.6</glassfish.expression.language>
-        <hibernate.validator.version>5.4.2.Final</hibernate.validator.version>
-        <apache.commons-lang3.version>3.6</apache.commons-lang3.version>
-        <jackson.databind.version>[2.8.11.1,)</jackson.databind.version>
-        <hyperSql.version>2.3.2</hyperSql.version>
-        <h2.version>2.1.210</h2.version>
-        <derby.version>10.11.1.1</derby.version>
-        <mysql.version>8.0.16</mysql.version>
-        <slf4j.api.version>1.7.25</slf4j.api.version>
-        <hibernate.core.version>5.4.24.Final</hibernate.core.version>
-        <hibernate.entitymanager.version>4.3.10.Final</hibernate.entitymanager.version>
-        <hibernate.c3po.version>4.3.10.Final</hibernate.c3po.version>
-        <joda.time.version>2.9.9</joda.time.version>
-        <ehcache.version>2.9.1</ehcache.version>
-        <activemq-spring.version>5.10.0</activemq-spring.version>
+        <glassfish.expression.language>3.0.0</glassfish.expression.language>
+        <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
+        <apache.commons-lang3.version>3.14.0</apache.commons-lang3.version>
+        <jackson.databind.version>2.17.0</jackson.databind.version>
+        <hyperSql.version>2.7.2</hyperSql.version>
+        <h2.version>2.2.224</h2.version>
+        <derby.version>10.16.1.1</derby.version>
+        <mysql.version>8.0.33</mysql.version>
+        <slf4j.api.version>2.0.12</slf4j.api.version>
+        <hibernate.core.version>5.6.15.Final</hibernate.core.version>
+        <hibernate.entitymanager.version>5.6.15.Final</hibernate.entitymanager.version>
+        <hibernate.c3po.version>5.6.15.Final</hibernate.c3po.version>
+        <joda.time.version>2.12.7</joda.time.version>
+        <ehcache.version>2.10.9.2</ehcache.version>
+        <activemq-spring.version>5.18.3</activemq-spring.version>
         <quartz.version>2.3.2</quartz.version>
+        <javax.annotation.version>1.3.2</javax.annotation.version>
     </properties>
 
     <dependencies>
@@ -63,7 +63,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.glassfish.web</groupId>
+            <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
             <version>${glassfish.expression.language}</version>
         </dependency>
@@ -107,24 +107,11 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -248,6 +235,13 @@
             <version>${spring.version}</version>
         </dependency>
 
+        <!-- javax.annotation.PostConstruct removed from JDK 11+ -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>${javax.annotation.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -255,7 +249,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -279,7 +273,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.5.2</version>
                 <configuration>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
                     <filters>
@@ -324,18 +318,31 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>3.0.5</version>
+                <version>4.25.1</version>
                 <configuration>
                     <propertyFile>src/main/resources/db/liquibase.properties</propertyFile>
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>process-resources</phase>
+                        <phase>none</phase>
                         <goals>
                             <goal>update</goal>
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                    </argLine>
+                </configuration>
             </plugin>
 
         </plugins>

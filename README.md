@@ -42,7 +42,7 @@ backend web service.
 
 ### <a name="prerequisites"></a>Pre - Requisites
 
-- Java JDK 7
+- Java JDK 21
 - Maven
 - MySQL
  
