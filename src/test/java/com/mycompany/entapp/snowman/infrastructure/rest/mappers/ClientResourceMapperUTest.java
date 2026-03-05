@@ -11,10 +11,10 @@ import com.mycompany.entapp.snowman.infrastructure.rest.resources.ClientResource
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.ProjectResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.ArgumentMatchers;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,8 +23,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ProjectResourceMapper.class})
+@RunWith(MockitoJUnitRunner.class)
 public class ClientResourceMapperUTest {
 
     @Test
@@ -39,16 +38,16 @@ public class ClientResourceMapperUTest {
         Set<Project> projects = new HashSet<>();
         projects.add(new Project());
 
-        PowerMockito.mockStatic(ProjectResourceMapper.class);
+        try (MockedStatic<ProjectResourceMapper> mockedMapper = Mockito.mockStatic(ProjectResourceMapper.class)) {
+            mockedMapper.when(() -> ProjectResourceMapper.mapToProjects(ArgumentMatchers.any()))
+                .thenReturn(projects);
 
-        PowerMockito.when(ProjectResourceMapper.mapToProjects(Matchers.anyListOf(ProjectResource.class)))
-            .thenReturn(projects);
+            Client client = ClientResourceMapper.mapToClient(clientResource);
 
-        Client client = ClientResourceMapper.mapToClient(clientResource);
-
-        assertEquals(clientId, client.getId());
-        assertEquals(clientName, client.getClientName());
-        assertEquals(projects, client.getProjects());
+            assertEquals(clientId, client.getId());
+            assertEquals(clientName, client.getClientName());
+            assertEquals(projects, client.getProjects());
+        }
     }
 
     @Test
@@ -66,16 +65,16 @@ public class ClientResourceMapperUTest {
         projectResource.setTitle("Project");
         projectResources.add(projectResource);
 
-        PowerMockito.mockStatic(ProjectResourceMapper.class);
+        try (MockedStatic<ProjectResourceMapper> mockedMapper = Mockito.mockStatic(ProjectResourceMapper.class)) {
+            mockedMapper.when(() -> ProjectResourceMapper.mapToProjectResources(ArgumentMatchers.any()))
+                .thenReturn(projectResources);
 
-        PowerMockito.when(ProjectResourceMapper.mapToProjectResources(Matchers.anySetOf(Project.class)))
-            .thenReturn(projectResources);
+            ClientResource clientResource = ClientResourceMapper.mapToClientResource(client);
 
-        ClientResource clientResource = ClientResourceMapper.mapToClientResource(client);
-
-        assertEquals(clientId, clientResource.getClientId());
-        assertEquals(clientName, clientResource.getClientName());
-        assertEquals(projectResources, clientResource.getProjects());
+            assertEquals(clientId, clientResource.getClientId());
+            assertEquals(clientName, clientResource.getClientName());
+            assertEquals(projectResources, clientResource.getProjects());
+        }
     }
 
 }
