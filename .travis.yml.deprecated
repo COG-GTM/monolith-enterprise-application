@@ -1,0 +1,8 @@
+# DEPRECATED: This Travis CI configuration has been replaced by GitHub Actions.
+# See .github/workflows/build.yml for the new CI/CD pipeline.
+# This file is kept for reference only and can be safely removed.
+
+language: java
+install: "mvn clean install -U -Dliquibase.should.run=false"
+jdk:
+   - oraclejdk8
