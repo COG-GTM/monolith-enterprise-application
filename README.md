@@ -1,6 +1,5 @@
 # Enterprise Application : Snowman
 
-
 ## Table of Contents
 
 - [Preamble](#preamble)
