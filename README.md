@@ -1,7 +1,5 @@
 # Enterprise Application : Snowman
 
-[![Build Status](https://travis-ci.org/colinbut/enterprise-application.svg?branch=master)](https://travis-ci.org/colinbut/enterprise-application)
-
 ## Table of Contents
 
 - [Preamble](#preamble)
@@ -42,11 +40,12 @@ backend web service.
 
 ### <a name="prerequisites"></a>Pre - Requisites
 
-- Java JDK 7
-- Maven
+- Java JDK 11 (Temurin/Adoptium recommended)
+- Maven 3.6+
 - MySQL
- 
- 
+
+> **Note:** This project was migrated from Java 1.7/8 to Java 11. See [MIGRATION_NOTES.md](MIGRATION_NOTES.md) for full migration details.
+
 1. Start up MySQL Server 
 2. run `run.sh` script
 
