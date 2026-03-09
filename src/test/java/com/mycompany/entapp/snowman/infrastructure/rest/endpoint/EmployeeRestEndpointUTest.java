@@ -39,6 +39,8 @@ public class EmployeeRestEndpointUTest {
         Employee employee = new Employee();
         EmployeeResource employeeResource = new EmployeeResource();
 
+        Mockito.when(employeeService.getEmployee(employeeId)).thenReturn(employee);
+        PowerMockito.mockStatic(EmployeeResourceMapper.class);
         PowerMockito.when(EmployeeResourceMapper.mapEmployeeToEmployeeResource(employee)).thenReturn(employeeResource);
 
         ResponseEntity<EmployeeResource> responseEntity = systemUnderTest.getEmployee(employeeId);
@@ -61,6 +63,7 @@ public class EmployeeRestEndpointUTest {
         systemUnderTest.createEmployee(employeeResource);
 
         PowerMockito.verifyStatic(EmployeeResourceMapper.class);
+        EmployeeResourceMapper.mapEmployeeResourceToEmployee(employeeResource);
         Mockito.verify(employeeService, Mockito.times(1)).createEmployee(employee);
     }
 
@@ -78,6 +81,7 @@ public class EmployeeRestEndpointUTest {
         systemUnderTest.updateExistingEmployee(employeeResource);
 
         PowerMockito.verifyStatic(EmployeeResourceMapper.class);
+        EmployeeResourceMapper.mapEmployeeResourceToEmployee(employeeResource);
         Mockito.verify(employeeService, Mockito.times(1)).updateEmployee(employee);
     }
 

@@ -41,7 +41,7 @@ public class ClientResourceMapperUTest {
 
         PowerMockito.mockStatic(ProjectResourceMapper.class);
 
-        PowerMockito.when(ProjectResourceMapper.mapToProjects(ArgumentMatchers.anyList()))
+        PowerMockito.when(ProjectResourceMapper.mapToProjects(ArgumentMatchers.any()))
             .thenReturn(projects);
 
         Client client = ClientResourceMapper.mapToClient(clientResource);
@@ -68,7 +68,7 @@ public class ClientResourceMapperUTest {
 
         PowerMockito.mockStatic(ProjectResourceMapper.class);
 
-        PowerMockito.when(ProjectResourceMapper.mapToProjectResources(ArgumentMatchers.anySet()))
+        PowerMockito.when(ProjectResourceMapper.mapToProjectResources(ArgumentMatchers.any()))
             .thenReturn(projectResources);
 
         ClientResource clientResource = ClientResourceMapper.mapToClientResource(client);

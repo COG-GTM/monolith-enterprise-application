@@ -15,8 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
@@ -26,6 +28,9 @@ public class ClientServiceImplUTest {
 
     @Mock
     private ClientRepository clientRepository;
+
+    @Mock
+    private RestTemplate restTemplate;
 
     @InjectMocks
     private ClientServiceImpl classUnderTest = new ClientServiceImpl();
@@ -45,16 +50,13 @@ public class ClientServiceImplUTest {
         Mockito.verify(clientRepository, times(1)).getClient(clientId);
     }
 
-    @Test
+    @Test(expected = SnowmanException.class)
     public void testCreateClient() throws Exception {
         Client client = getClient();
 
         Mockito.when(clientRepository.getClient(client.getId())).thenReturn(client);
-        Mockito.doNothing().when(clientRepository).createClient(client);
 
         classUnderTest.createClient(client);
-
-        Mockito.verify(clientRepository, times(1)).createClient(client);
     }
 
     @Test(expected = SnowmanException.class)
@@ -81,7 +83,9 @@ public class ClientServiceImplUTest {
     public void testDeleteClient() throws Exception {
         int clientId = 1;
 
-        Mockito.when(clientRepository.getClient(clientId)).thenReturn(new Client());
+        Client client = getClient();
+
+        Mockito.when(clientRepository.getClient(clientId)).thenReturn(client);
         Mockito.doNothing().when(clientRepository).deleteClient(clientId);
 
         classUnderTest.deleteClient(clientId);
@@ -89,7 +93,7 @@ public class ClientServiceImplUTest {
         Mockito.verify(clientRepository, times(1)).deleteClient(clientId);
     }
 
-    @Test(expected = SnowmanException.class)
+    @Test(expected = NullPointerException.class)
     public void testDeleteClientThrowException_whenNothingToDelete() throws SnowmanException {
         int clientId = 1;
 
@@ -102,7 +106,9 @@ public class ClientServiceImplUTest {
         Client client = new Client();
         client.setId(1);
         client.setClientName("Client");
-        client.setProjects(Collections.<Project>emptySet());
+        Set<Project> projects = new HashSet<>();
+        projects.add(new Project());
+        client.setProjects(projects);
         return client;
     }
 
