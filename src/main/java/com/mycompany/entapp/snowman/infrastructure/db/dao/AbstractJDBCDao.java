@@ -26,7 +26,9 @@ public abstract class AbstractJDBCDao {
 
     protected void setupDBDriver() {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            // Note: With JDBC 4.0+ and MySQL Connector/J 8.x, Class.forName is no longer
+            // strictly necessary as drivers are auto-loaded via ServiceLoader.
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             LOG.error("{}", e); // TODO should throw a business exception back up
         }
