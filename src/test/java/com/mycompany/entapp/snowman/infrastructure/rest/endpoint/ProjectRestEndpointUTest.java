@@ -13,7 +13,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -43,7 +43,7 @@ public class ProjectRestEndpointUTest {
         projectResource.setTitle("Title");
         projectResource.setDateStarted(new DateTime(2018, 1,1, 12, 0, 0).toDate());
 
-        Mockito.doNothing().when(projectService).createProject(Matchers.any(Project.class));
+        Mockito.doNothing().when(projectService).createProject(ArgumentMatchers.any(Project.class));
 
         ResponseEntity<?> response = classUnderTest.createProject(projectResource);
 
@@ -86,7 +86,7 @@ public class ProjectRestEndpointUTest {
         projectResource.setTitle("Title");
         projectResource.setDateStarted(new DateTime(2018, 1,1, 12, 0, 0).toDate());
 
-        Mockito.doNothing().when(projectService).createProject(Matchers.any(Project.class));
+        Mockito.doNothing().when(projectService).createProject(ArgumentMatchers.any(Project.class));
 
         ResponseEntity<?> response = classUnderTest.updateProject(projectResource);
 

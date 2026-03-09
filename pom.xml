@@ -11,9 +11,9 @@
     <properties>
         <spring.version>[4.3.18,)</spring.version>
         <junit.version>4.13.1</junit.version>
-        <java.version>1.7</java.version>
-        <mockito.version>1.10.19</mockito.version>
-        <powermock.version>1.7.3</powermock.version>
+        <java.version>11</java.version>
+        <mockito.version>3.12.4</mockito.version>
+        <powermock.version>2.0.9</powermock.version>
         <jetty.version>[9.4.11.v20180605,)</jetty.version>
         <jaxrs.version>2.0</jaxrs.version>
         <bean.validation.version>2.0.0.Final</bean.validation.version>
@@ -107,14 +107,14 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
+            <artifactId>powermock-api-mockito2</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
@@ -255,10 +255,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>11</release>
                 </configuration>
                 <executions>
                     <execution>
@@ -336,6 +335,15 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</argLine>
+                </configuration>
             </plugin>
 
         </plugins>
