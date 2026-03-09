@@ -11,7 +11,7 @@ import com.mycompany.entapp.snowman.infrastructure.rest.resources.ClientResource
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.ProjectResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -41,7 +41,7 @@ public class ClientResourceMapperUTest {
 
         PowerMockito.mockStatic(ProjectResourceMapper.class);
 
-        PowerMockito.when(ProjectResourceMapper.mapToProjects(Matchers.anyListOf(ProjectResource.class)))
+        PowerMockito.when(ProjectResourceMapper.mapToProjects(ArgumentMatchers.any()))
             .thenReturn(projects);
 
         Client client = ClientResourceMapper.mapToClient(clientResource);
@@ -68,7 +68,7 @@ public class ClientResourceMapperUTest {
 
         PowerMockito.mockStatic(ProjectResourceMapper.class);
 
-        PowerMockito.when(ProjectResourceMapper.mapToProjectResources(Matchers.anySetOf(Project.class)))
+        PowerMockito.when(ProjectResourceMapper.mapToProjectResources(ArgumentMatchers.any()))
             .thenReturn(projectResources);
 
         ClientResource clientResource = ClientResourceMapper.mapToClientResource(client);

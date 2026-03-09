@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -76,7 +76,7 @@ public class UserServiceImplUTest {
 
         userService.deleteUser(userId);
 
-        Mockito.verify(userService, Mockito.times(1)).deleteUser(userId);
+        Mockito.verify(userDao, Mockito.times(1)).removeUser(userId);
     }
 
     private User getUser(int userId) {
