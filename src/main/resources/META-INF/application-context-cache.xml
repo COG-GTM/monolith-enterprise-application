@@ -8,7 +8,7 @@
     <cache:annotation-driven/>
 
     <bean id="ehcacheManagerFactoryBean" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="configLocation" value="/WEB-INF/ehcache.xml"/>
+        <property name="configLocation" value="classpath:ehcache.xml"/>
         <property name="shared" value="true"/>
     </bean>
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
