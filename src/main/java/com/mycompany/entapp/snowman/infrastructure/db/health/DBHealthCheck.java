@@ -23,14 +23,11 @@ public class DBHealthCheck extends AbstractJDBCDao {
     private static final String SELECT_MIN_1_FROM_APP_INFO = "SELECT min(1) from app_info";
 
     public boolean getDBStatus() {
-        Statement stmt = null;
-        Connection connection = null;
+        setupDBDriver();
 
-        try {
-            setupDBDriver();
-            connection = getConnection();
-            stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(SELECT_MIN_1_FROM_APP_INFO);
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(SELECT_MIN_1_FROM_APP_INFO)) {
 
             if (rs.first()) {
                 return true;
@@ -38,19 +35,6 @@ public class DBHealthCheck extends AbstractJDBCDao {
 
         } catch (SQLException e) {
             LOG.error("{}", e);
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-
-                if (stmt != null) {
-                    stmt.close();
-                }
-
-            } catch (SQLException e) {
-                LOG.error("{}", e);
-            }
         }
 
         return false;

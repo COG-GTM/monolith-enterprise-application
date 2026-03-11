@@ -8,10 +8,9 @@ package com.mycompany.entapp.snowman.infrastructure.rest.mappers;
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.ProjectResource;
 import com.mycompany.entapp.snowman.domain.model.Project;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class ProjectResourceMapper {
 
@@ -38,18 +37,14 @@ public final class ProjectResourceMapper {
     }
 
     public static Set<Project> mapToProjects(List<ProjectResource> projectResources) {
-        Set<Project> projects = new HashSet<>();
-        for (ProjectResource projectResource : projectResources) {
-            projects.add(mapToProject(projectResource));
-        }
-        return projects;
+        return projectResources.stream()
+            .map(ProjectResourceMapper::mapToProject)
+            .collect(Collectors.toSet());
     }
 
     public static List<ProjectResource> mapToProjectResources(Set<Project> projects) {
-        List<ProjectResource> projectResources = new ArrayList<>();
-        for (Project project : projects) {
-            projectResources.add(mapToProjectResource(project));
-        }
-        return projectResources;
+        return projects.stream()
+            .map(ProjectResourceMapper::mapToProjectResource)
+            .collect(Collectors.toList());
     }
 }
