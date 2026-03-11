@@ -34,9 +34,7 @@ public class ApplicationInfoRepositoryImpl implements ApplicationInfoRepository 
         LOGGER.info("Loading AppInfo from Database");
 
         List<AppInfo> appInfos = applicationInfoDao.loadApplicationInfos();
-        for (AppInfo appInfo : appInfos) {
-            appInfoMap.put(appInfo.getId(), appInfo);
-        }
+        appInfos.forEach(appInfo -> appInfoMap.put(appInfo.getId(), appInfo));
     }
 
     @Override
