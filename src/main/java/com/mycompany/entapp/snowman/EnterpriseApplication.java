@@ -5,71 +5,19 @@
  */
 package com.mycompany.entapp.snowman;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.webapp.WebAppContext;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.ImportResource;
 
-import java.net.URL;
-
+@SpringBootApplication
+@EnableCaching
+@ImportResource({
+    "classpath:META-INF/application-context.xml"
+})
 public class EnterpriseApplication {
 
-    private static final int DEFAULT_PORT = 8090;
-
-    private EnterpriseApplication() {
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        final Server server = new Server();
-
-        final ServerConnector serverConnector = new ServerConnector(server);
-
-        serverConnector.setPort(resolvePort());
-
-        server.setConnectors(new Connector[]{serverConnector});
-
-        WebAppContext webAppContext = new WebAppContext();
-        webAppContext.setDescriptor(getResource("webapp/WEB-INF/web.xml"));
-        webAppContext.setResourceBase(getResource("webapp"));
-        webAppContext.setContextPath("/");
-        webAppContext.setParentLoaderPriority(true);
-
-        server.setHandler(webAppContext);
-        server.start();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (server.isStarted()) {
-                    server.setStopAtShutdown(true);
-
-                    try {
-                        server.stop();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }));
-
-        server.join();
-
-    }
-
-    private static String getResource(String resourceName) {
-        URL resourceURL = EnterpriseApplication.class.getClassLoader().getResource(resourceName);
-        if (resourceURL == null) {
-            throw new RuntimeException("Unable to fetch specified resource: " + resourceName);
-        }
-        return resourceURL.toString();
-    }
-
-    private static int resolvePort() {
-        try {
-            return Integer.parseInt(System.getProperty("port"));
-        } catch (NumberFormatException ex) {
-            return DEFAULT_PORT;
-        }
+    public static void main(String[] args) {
+        SpringApplication.run(EnterpriseApplication.class, args);
     }
 }
