@@ -62,7 +62,7 @@ public class UserServiceImplUTest {
 
         Mockito.doNothing().when(userDao).saveUser(user);
 
-        userService.createUser(user);
+        userService.updateUser(user);
 
         Mockito.verify(userDao, Mockito.times(1)).saveUser(user);
     }
@@ -76,7 +76,12 @@ public class UserServiceImplUTest {
 
         userService.deleteUser(userId);
 
-        Mockito.verify(userService, Mockito.times(1)).deleteUser(userId);
+        Mockito.verify(userDao, Mockito.times(1)).removeUser(userId);
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testFindUserWithNonNumericIdShouldThrowNumberFormatException() {
+        userService.findUser("abc");
     }
 
     private User getUser(int userId) {
