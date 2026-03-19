@@ -37,7 +37,6 @@ public class ApplicationInfoDaoImpl extends AbstractJDBCDao implements Applicati
         Connection connection = null;
 
         try {
-            setupDBDriver();
             connection = getConnection();
             stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(SELECT_FROM_APP_INFO_QUERY);

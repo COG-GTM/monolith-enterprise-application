@@ -5,6 +5,8 @@
  */
 package com.mycompany.entapp.snowman.infrastructure.messaging;
 
+import com.mycompany.entapp.snowman.infrastructure.messaging.dto.NotificationDTO;
+
 public interface NotificationPort {
-    void broadcastUpdates(Object object);
+    void broadcastUpdates(NotificationDTO notification);
 }

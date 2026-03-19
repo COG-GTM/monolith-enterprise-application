@@ -27,7 +27,7 @@ public final class UserResourceMapper {
         UserResource userResource = new UserResource();
         userResource.setUserId(user.getUserId());
         userResource.setUsername(user.getUsername());
-        userResource.setPassword(user.getPassword());
+        // VULN-05 (CWE-256/CWE-312): Never return the password (or hash) in API responses
         userResource.setEmail(user.getEmail());
         userResource.setFirstName(user.getFirstname());
         userResource.setSecondName(user.getLastname());

@@ -5,6 +5,8 @@
  */
 package com.mycompany.entapp.snowman.infrastructure.messaging.adapter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.entapp.snowman.infrastructure.messaging.InvoiceSystemPort;
 import com.mycompany.entapp.snowman.infrastructure.messaging.dto.ClientDTO;
 import org.slf4j.Logger;
@@ -17,13 +19,15 @@ import org.springframework.stereotype.Component;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.ObjectMessage;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 @Component
 public class InvoiceSystemAdapter implements InvoiceSystemPort {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceSystemAdapter.class);
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     @Qualifier("invoiceJmsTemplate")
@@ -31,14 +35,19 @@ public class InvoiceSystemAdapter implements InvoiceSystemPort {
 
     @Override
     public void sendProjectInfo(final ClientDTO clientDTO) {
-        LOGGER.info("Sending client info to Invoice System: {}", clientDTO);
+        LOGGER.info("Sending client info [clientId={}] to Invoice System", clientDTO.getClientId());
         jmsTemplate.send(new MessageCreator() {
             @Override
             public Message createMessage(Session session) throws JMSException {
-                ObjectMessage objectMessage = session.createObjectMessage(clientDTO);
-                // EIP - correlate at the other end
-                objectMessage.setJMSCorrelationID("ClientID-" + clientDTO.getClientId());
-                return objectMessage;
+                try {
+                    String jsonString = objectMapper.writeValueAsString(clientDTO);
+                    TextMessage textMessage = session.createTextMessage(jsonString);
+                    // EIP - correlate at the other end
+                    textMessage.setJMSCorrelationID("ClientID-" + clientDTO.getClientId());
+                    return textMessage;
+                } catch (JsonProcessingException e) {
+                    throw new JMSException("Failed to serialize ClientDTO to JSON: " + e.getMessage());
+                }
             }
         });
     }

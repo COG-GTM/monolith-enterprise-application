@@ -63,7 +63,8 @@ public class UserResourceMapperUTest {
 
         assertEquals(userId, userResource.getUserId());
         assertEquals(username, userResource.getUsername());
-        assertEquals(password, userResource.getPassword());
+        // Password should not be exposed in API responses (VULN-05)
+        assertNull(userResource.getPassword());
         assertEquals(email, userResource.getEmail());
         assertEquals(firstName, userResource.getFirstName());
         assertEquals(secondName, userResource.getSecondName());

@@ -13,6 +13,8 @@ import java.io.Serializable;
 import java.util.List;
 
 public class EmployeeDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private String firstName;
     private String surname;
@@ -95,10 +97,9 @@ public class EmployeeDTO implements Serializable {
     public String toString() {
         return new ToStringBuilder(this)
             .append("id", id)
-            .append("firstName", firstName)
-            .append("surname", surname)
+            .append("firstName", firstName != null && !firstName.isEmpty() ? firstName.charAt(0) + "***" : "")
+            .append("surname", surname != null && !surname.isEmpty() ? surname.charAt(0) + "***" : "")
             .append("role", role)
-            .append("projectDTOList", projectDTOList)
             .toString();
     }
 }
