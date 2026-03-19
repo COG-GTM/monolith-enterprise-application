@@ -9,30 +9,30 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <spring.version>[4.3.18,)</spring.version>
+        <spring.version>5.3.31</spring.version>
         <junit.version>4.13.1</junit.version>
-        <java.version>1.7</java.version>
+        <java.version>11</java.version>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.7.3</powermock.version>
-        <jetty.version>[9.4.11.v20180605,)</jetty.version>
+        <spring-security.version>5.8.9</spring-security.version>
+        <jetty.version>9.4.53.v20231009</jetty.version>
         <jaxrs.version>2.0</jaxrs.version>
         <bean.validation.version>2.0.0.Final</bean.validation.version>
         <expression.language.version>3.0.0</expression.language.version>
         <glassfish.expression.language>2.2.6</glassfish.expression.language>
         <hibernate.validator.version>5.4.2.Final</hibernate.validator.version>
         <apache.commons-lang3.version>3.6</apache.commons-lang3.version>
-        <jackson.databind.version>[2.8.11.1,)</jackson.databind.version>
+        <jackson.databind.version>2.16.1</jackson.databind.version>
         <hyperSql.version>2.3.2</hyperSql.version>
         <h2.version>2.1.210</h2.version>
         <derby.version>10.11.1.1</derby.version>
         <mysql.version>8.0.16</mysql.version>
         <slf4j.api.version>1.7.25</slf4j.api.version>
-        <hibernate.core.version>5.4.24.Final</hibernate.core.version>
-        <hibernate.entitymanager.version>4.3.10.Final</hibernate.entitymanager.version>
-        <hibernate.c3po.version>4.3.10.Final</hibernate.c3po.version>
+        <hibernate.core.version>5.6.15.Final</hibernate.core.version>
+        <hibernate.c3po.version>5.6.15.Final</hibernate.c3po.version>
         <joda.time.version>2.9.9</joda.time.version>
         <ehcache.version>2.9.1</ehcache.version>
-        <activemq-spring.version>5.10.0</activemq-spring.version>
+        <activemq-spring.version>5.17.6</activemq-spring.version>
         <quartz.version>2.3.2</quartz.version>
     </properties>
 
@@ -194,12 +194,6 @@
 
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>${hibernate.entitymanager.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
             <version>${hibernate.c3po.version}</version>
         </dependency>
@@ -246,6 +240,34 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <!-- Servlet API required for Spring Security -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring Security (VULN-12, CWE-306) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+
+        <!-- BCrypt password hashing (VULN-05, CWE-256) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>${spring-security.version}</version>
         </dependency>
 
     </dependencies>
@@ -327,6 +349,7 @@
                 <version>3.0.5</version>
                 <configuration>
                     <propertyFile>src/main/resources/db/liquibase.properties</propertyFile>
+                    <skip>${liquibase.skip}</skip>
                 </configuration>
                 <executions>
                     <execution>

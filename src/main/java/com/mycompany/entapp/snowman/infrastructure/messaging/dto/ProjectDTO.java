@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class ProjectDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private int projectId;
     private String projectTitle;

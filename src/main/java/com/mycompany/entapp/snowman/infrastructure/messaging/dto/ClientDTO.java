@@ -13,6 +13,8 @@ import java.io.Serializable;
 import java.util.Set;
 
 public class ClientDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int clientId;
     private String clientName;
     private Set<ProjectDTO> projectDTOS;

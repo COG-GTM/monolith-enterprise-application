@@ -15,6 +15,7 @@ import com.mycompany.entapp.snowman.domain.service.ClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,9 @@ public class ClientServiceImpl implements ClientService {
     private static final Logger LOG = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     private static final int MAX_RETRIES = 3;
-    private static final String URI = "http://localhost:8080/client-system/client/{clientId}/projects";
+
+    @Value("${client.system.url}")
+    private String clientSystemUrl;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -79,7 +82,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     private ResponseEntity<String> makeRequest() {
-        return restTemplate.getForEntity(URI, String.class);
+        return restTemplate.getForEntity(clientSystemUrl, String.class);
     }
 
     @Override

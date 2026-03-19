@@ -6,6 +6,7 @@
 package com.mycompany.entapp.snowman.infrastructure.messaging.adapter;
 
 import com.mycompany.entapp.snowman.infrastructure.messaging.NotificationPort;
+import com.mycompany.entapp.snowman.infrastructure.messaging.dto.NotificationDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,13 @@ public class NotificationAdapter implements NotificationPort {
     private JmsTemplate jmsTemplate;
 
     @Override
-    public void broadcastUpdates(Object object) {
-        LOGGER.info("Sending object {} as update notification");
-        jmsTemplate.convertAndSend(object);
+    public void broadcastUpdates(NotificationDTO notification) {
+        if (notification == null) {
+            LOGGER.warn("Attempted to broadcast a null notification, ignoring");
+            return;
+        }
+        LOGGER.info("Sending notification [entityType={}, entityId={}, action={}]",
+            notification.getEntityType(), notification.getEntityId(), notification.getAction());
+        jmsTemplate.convertAndSend(notification);
     }
 }

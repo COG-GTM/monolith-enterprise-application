@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import java.util.UUID;
 
 @Component
 public class PayrollSystemAdapter implements PayrollSystemPort {
@@ -33,7 +34,7 @@ public class PayrollSystemAdapter implements PayrollSystemPort {
     @Override
     public void sendEmployeeInfo(final EmployeeDTO employeeDTO) {
 
-        LOGGER.info("Sending Employee Info {} to external Payroll system", employeeDTO);
+        LOGGER.info("Sending Employee Info [id={}] to external Payroll system", employeeDTO.getId());
 
         // Flatten the Object here - external Payroll system does not expect an Object
         jmsTemplate.convertAndSend(employeeDTO, new MessagePostProcessor() {
@@ -41,15 +42,10 @@ public class PayrollSystemAdapter implements PayrollSystemPort {
             public Message postProcessMessage(Message message) throws JMSException {
                 message.setJMSCorrelationID("EmployeeId-" + employeeDTO.getId());
 
-                // Don't care if external system doesn't get message
-                // Payroll system at the moment can't handle that much payroll processing at once
-                // So worst case, missed payments at end of month for employees
-                // i.e. we can always pay them later, next month, haha!
-                // or Account/HR Department could process payroll it manually
                 message.setBooleanProperty("pristine", true);
-                message.setJMSDeliveryMode(DeliveryMode.NON_PERSISTENT);
-                message.setJMSMessageID("123-0000-" + employeeDTO.getId());
-                message.setJMSPriority(1);
+                message.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
+                message.setJMSMessageID("ID:" + UUID.randomUUID().toString());
+                message.setJMSPriority(4);
                 message.setJMSExpiration(MESSAGE_EXPIRATION_IN_MS);
 
                 return message;
