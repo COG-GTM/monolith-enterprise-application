@@ -14,17 +14,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.Assert.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({AppInfoResourceMapper.class})
+@RunWith(MockitoJUnitRunner.class)
 public class AppInfoRestEndpointUTest {
 
     @Mock
@@ -35,8 +33,6 @@ public class AppInfoRestEndpointUTest {
 
     @Test
     public void testGetApplicationInformation() throws BusinessException {
-        PowerMockito.mockStatic(AppInfoResourceMapper.class);
-
         AppInfoResource appInfoResource = new AppInfoResource();
         appInfoResource.setId(1);
         appInfoResource.setVersion("1.0.0");
@@ -46,13 +42,15 @@ public class AppInfoRestEndpointUTest {
         appInfo.setVersion("1.0.0");
 
         Mockito.when(applicationInfoService.getAppInfo()).thenReturn(appInfo);
-        PowerMockito.when(AppInfoResourceMapper.mapAppInfoToResource(appInfo)).thenReturn(appInfoResource);
 
-        ResponseEntity<AppInfoResource> responseEntity = classUnderTest.getApplicationInformation();
+        try (MockedStatic<AppInfoResourceMapper> mockedMapper = Mockito.mockStatic(AppInfoResourceMapper.class)) {
+            mockedMapper.when(() -> AppInfoResourceMapper.mapAppInfoToResource(appInfo)).thenReturn(appInfoResource);
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(appInfoResource, responseEntity.getBody());
+            ResponseEntity<AppInfoResource> responseEntity = classUnderTest.getApplicationInformation();
 
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertEquals(appInfoResource, responseEntity.getBody());
+        }
     }
 
     @Test(expected = RuntimeException.class)

@@ -1,14 +1,14 @@
 /*
  * |-------------------------------------------------
- * | Copyright © 2017 Colin But. All rights reserved.
+ * | Copyright (c) 2017 Colin But. All rights reserved.
  * |-------------------------------------------------
  */
 package com.mycompany.entapp.snowman;
 
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.net.URL;
 
@@ -31,24 +31,21 @@ public class EnterpriseApplication {
 
         WebAppContext webAppContext = new WebAppContext();
         webAppContext.setDescriptor(getResource("webapp/WEB-INF/web.xml"));
-        webAppContext.setResourceBase(getResource("webapp"));
+        webAppContext.setBaseResourceAsString(getResource("webapp"));
         webAppContext.setContextPath("/");
         webAppContext.setParentLoaderPriority(true);
 
         server.setHandler(webAppContext);
         server.start();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (server.isStarted()) {
-                    server.setStopAtShutdown(true);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (server.isStarted()) {
+                server.setStopAtShutdown(true);
 
-                    try {
-                        server.stop();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    server.stop();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
             }
         }));
