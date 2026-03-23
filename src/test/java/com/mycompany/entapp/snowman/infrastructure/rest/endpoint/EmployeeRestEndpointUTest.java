@@ -37,6 +37,8 @@ public class EmployeeRestEndpointUTest {
         Employee employee = new Employee();
         EmployeeResource employeeResource = new EmployeeResource();
 
+        Mockito.when(employeeService.getEmployee(employeeId)).thenReturn(employee);
+
         try (MockedStatic<EmployeeResourceMapper> mockedStatic = Mockito.mockStatic(EmployeeResourceMapper.class)) {
             mockedStatic.when(() -> EmployeeResourceMapper.mapEmployeeToEmployeeResource(employee)).thenReturn(employeeResource);
 

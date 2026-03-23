@@ -27,9 +27,13 @@ public class ClientResourceMapperUTest {
         int clientId = 1;
         String clientName = "Client";
 
+        List<ProjectResource> projectResourceList = new ArrayList<>();
+        projectResourceList.add(new ProjectResource());
+
         ClientResource clientResource = new ClientResource();
         clientResource.setClientId(clientId);
         clientResource.setClientName(clientName);
+        clientResource.setProjects(projectResourceList);
 
         Set<Project> projects = new HashSet<>();
         projects.add(new Project());
@@ -51,9 +55,13 @@ public class ClientResourceMapperUTest {
         int clientId = 1;
         String clientName = "Client";
 
+        Set<Project> projectSet = new HashSet<>();
+        projectSet.add(new Project());
+
         Client client = new Client();
         client.setId(clientId);
         client.setClientName(clientName);
+        client.setProjects(projectSet);
 
         List<ProjectResource> projectResources = new ArrayList<>();
         ProjectResource projectResource = new ProjectResource();

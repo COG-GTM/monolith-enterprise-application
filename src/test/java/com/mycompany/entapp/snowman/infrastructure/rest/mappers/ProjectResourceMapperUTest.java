@@ -59,7 +59,26 @@ public class ProjectResourceMapperUTest {
 
     @Test
     public void testMapToProjects() throws Exception {
-        fail("To be Implemented");
+        Date dateStarted = new DateTime(2018,1,1,0,0,0).toDate();
+        Date dateEnded = new DateTime(2018,5,1,0,0,0).toDate();
+
+        ProjectResource projectResource = new ProjectResource();
+        projectResource.setProjectId(1);
+        projectResource.setTitle("Project Title");
+        projectResource.setDateStarted(dateStarted);
+        projectResource.setDateEnded(dateEnded);
+
+        java.util.List<ProjectResource> projectResources = new java.util.ArrayList<>();
+        projectResources.add(projectResource);
+
+        java.util.Set<Project> projects = ProjectResourceMapper.mapToProjects(projectResources);
+
+        assertEquals(1, projects.size());
+        Project mappedProject = projects.iterator().next();
+        assertEquals(1, mappedProject.getId());
+        assertEquals("Project Title", mappedProject.getProjectTitle());
+        assertEquals(dateStarted, mappedProject.getDateStarted());
+        assertEquals(dateEnded, mappedProject.getDateEnded());
     }
 
 }
