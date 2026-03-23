@@ -32,14 +32,11 @@ public class InvoiceSystemAdapter implements InvoiceSystemPort {
     @Override
     public void sendProjectInfo(final ClientDTO clientDTO) {
         LOGGER.info("Sending client info to Invoice System: {}", clientDTO);
-        jmsTemplate.send(new MessageCreator() {
-            @Override
-            public Message createMessage(Session session) throws JMSException {
+        jmsTemplate.send(session -> {
                 ObjectMessage objectMessage = session.createObjectMessage(clientDTO);
                 // EIP - correlate at the other end
                 objectMessage.setJMSCorrelationID("ClientID-" + clientDTO.getClientId());
                 return objectMessage;
-            }
         });
     }
 

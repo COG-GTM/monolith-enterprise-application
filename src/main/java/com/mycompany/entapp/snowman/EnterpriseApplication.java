@@ -38,9 +38,7 @@ public class EnterpriseApplication {
         server.setHandler(webAppContext);
         server.start();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 if (server.isStarted()) {
                     server.setStopAtShutdown(true);
 
@@ -50,7 +48,6 @@ public class EnterpriseApplication {
                         throw new RuntimeException(e);
                     }
                 }
-            }
         }));
 
         server.join();
