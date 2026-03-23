@@ -17,6 +17,7 @@
 - [Uber Jar](#uber-jar)
 - [Embedded Jetty](#embedded-jetty)
 - [Database Migration](#database-migration)
+- [Docker Compose (Recommended)](#docker-compose)
 - [Scalability](#scalability)
 - [Clustering](#clustering)
 - [Resiliency](#resiliency)
@@ -141,6 +142,101 @@ And to rollback those particular patches:
 mvn liquibase:rollback -Dliquibase.rollbackCount=1
 ```
 
+### <a name="docker-compose"></a>Docker Compose (Recommended)
+
+The preferred way to run Snowman is via Docker Compose. This setup replaces the need for
+a dedicated **Service Registry** (like Eureka) and **API Gateway** (like Spring Cloud Gateway)
+with lightweight, infrastructure-level alternatives:
+
+```
+  BEFORE (traditional Spring Cloud)          AFTER (Docker Compose + Traefik)
+  ===================================        ===================================
+
+  +------------------+                       +------------------+
+  | Eureka           |                       | Docker Compose   |
+  | Service Registry |  --- replaced by ---> | Built-in DNS     |
+  | (JVM process)    |                       | (zero config)    |
+  +------------------+                       +------------------+
+
+  +------------------+                       +------------------+
+  | Spring Cloud     |                       | Traefik          |
+  | Gateway          |  --- replaced by ---> | Reverse Proxy    |
+  | (JVM process)    |                       | (single binary)  |
+  +------------------+                       +------------------+
+```
+
+**Why this is better:**
+
+| Aspect              | Eureka + Spring Cloud Gateway        | Docker DNS + Traefik              |
+|---------------------|--------------------------------------|-----------------------------------|
+| Memory overhead     | ~512 MB+ (two extra JVMs)            | ~30 MB (Traefik binary)           |
+| Startup time        | 30-60 s per JVM                      | < 2 s                             |
+| Configuration       | Java code + YAML per service         | Docker labels (co-located)        |
+| Horizontal scaling  | Requires client-side registration     | `docker compose up --scale N`     |
+| Health checks       | Eureka heartbeats                    | Docker-native health checks       |
+| Dashboard           | Separate Eureka UI + Gateway actuator| Traefik dashboard on `:8080`      |
+
+**Architecture overview:**
+
+```
+                        :80 (HTTP)
+                           |
+                    +------v------+
+                    |   Traefik   |  <-- API Gateway (replaces Spring Cloud Gateway)
+                    |  (reverse   |      Routes /api/* -> snowman-app:8090
+                    |   proxy)    |      Dashboard at :8080
+                    +------+------+
+                           |
+              Docker Compose Network (snowman-net)
+              === built-in DNS service discovery ===
+              (replaces Eureka service registry)
+                           |
+            +--------------+--------------+
+            |              |              |
+     +------v------+ +----v----+ +-------v-------+
+     | snowman-app  | |  MySQL  | |   ActiveMQ    |
+     | :8090        | |  :3306  | |   :61616      |
+     | (scalable)   | |         | |   console:8161|
+     +--------------+ +---------+ +---------------+
+```
+
+#### Quick Start
+
+```bash
+# 1. Clone and start everything
+docker compose up -d --build
+
+# 2. Verify services
+docker compose ps
+
+# 3. Access the application
+#    Via Traefik gateway:   http://localhost/api/employee/1
+#    Direct (if exposed):   http://localhost:8090/employee/1
+#    Traefik dashboard:     http://localhost:8080
+#    ActiveMQ console:      http://localhost:8161 (admin/admin)
+
+# 4. Scale horizontally (no Eureka needed — Docker DNS load-balances)
+docker compose up -d --scale snowman-app=3
+
+# 5. Tear down
+docker compose down -v
+```
+
+#### Environment Variables
+
+The application is fully configurable via environment variables (set in
+`docker-compose.yml` or overridden with a `.env` file):
+
+| Variable            | Default                                          | Description                    |
+|---------------------|--------------------------------------------------|--------------------------------|
+| `APP_PORT`          | `8090`                                           | Jetty listen port              |
+| `JDBC_URL`          | `jdbc:mysql://localhost:3306/snowman?...`         | MySQL JDBC connection string   |
+| `JDBC_USERNAME`     | `username`                                       | Database user                  |
+| `JDBC_PASSWORD`     | `password`                                       | Database password              |
+| `JMS_BROKER_URL`    | `tcp://localhost:61616`                           | ActiveMQ broker URL            |
+| `HIBERNATE_DDL_AUTO`| `validate`                                       | Hibernate schema strategy      |
+| `JAVA_OPTS`         | *(empty)*                                        | Extra JVM flags                |
+
 ### <a name="scalability"></a>Scalability
 
 1. Horizonantal Scalability
@@ -150,7 +246,16 @@ mvn liquibase:rollback -Dliquibase.rollbackCount=1
 
 To support horizontal scalability you run multiple instances of the same application.
 
-You can do this manually like:
+**With Docker Compose (recommended):**
+
+```bash
+docker compose up -d --scale snowman-app=3
+```
+
+Traefik automatically load-balances across all replicas via Docker DNS — no
+Eureka service registration required.
+
+**Without Docker (manual):**
 
 ```java
 java -jar -Dport=[port number] target/Snowman.jar
