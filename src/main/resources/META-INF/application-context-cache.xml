@@ -7,12 +7,14 @@
 
     <cache:annotation-driven/>
 
-    <bean id="ehcacheManagerFactoryBean" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="configLocation" value="/WEB-INF/ehcache.xml"/>
-        <property name="shared" value="true"/>
+    <bean id="jCacheManagerFactoryBean" class="org.springframework.cache.jcache.JCacheCacheManager">
+        <property name="cacheManager" ref="jCacheCacheManagerFactoryBean"/>
     </bean>
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager" ref="ehcacheManagerFactoryBean"/>
+    <bean id="jCacheCacheManagerFactoryBean" class="org.springframework.cache.jcache.JCacheManagerFactoryBean">
+        <property name="cacheManagerUri" value="classpath:webapp/WEB-INF/ehcache.xml"/>
+    </bean>
+    <bean id="cacheManager" class="org.springframework.cache.jcache.JCacheCacheManager">
+        <property name="cacheManager" ref="jCacheCacheManagerFactoryBean"/>
     </bean>
 
 </beans>

@@ -1,19 +1,13 @@
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false"
-         monitoring="autodetect" dynamicConfig="true">
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.ehcache.org/v3"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
 
-    <diskStore path="java.io.tmpdir" />
-
-    <cache name="clientFindCache"
-           maxEntriesLocalHeap="10000"
-           maxEntriesLocalDisk="1000"
-           eternal="false"
-           diskSpoolBufferSizeMB="20"
-           timeToIdleSeconds="300"
-           timeToLiveSeconds="600"
-           memoryStoreEvictionPolicy="LFU"
-           transactionalMode="off">
-        <persistence strategy="localTempSwap" />
+    <cache alias="clientCache">
+        <expiry>
+            <ttl unit="seconds">300</ttl>
+        </expiry>
+        <heap unit="entries">1000</heap>
     </cache>
 
-</ehcache>
+</config>

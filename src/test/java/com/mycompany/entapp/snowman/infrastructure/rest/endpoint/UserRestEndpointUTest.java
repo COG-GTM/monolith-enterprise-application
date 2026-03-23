@@ -13,18 +13,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(UserResourceMapper.class)
+@RunWith(MockitoJUnitRunner.class)
 public class UserRestEndpointUTest {
 
     @Mock
@@ -48,14 +46,14 @@ public class UserRestEndpointUTest {
 
         Mockito.when(userService.findUser("1")).thenReturn(user);
 
-        PowerMockito.mockStatic(UserResourceMapper.class);
+        try (MockedStatic<UserResourceMapper> mockedMapper = Mockito.mockStatic(UserResourceMapper.class)) {
+            mockedMapper.when(() -> UserResourceMapper.mapUserToUserResource(user)).thenReturn(userResource);
 
-        PowerMockito.when(UserResourceMapper.mapUserToUserResource(user)).thenReturn(userResource);
+            ResponseEntity<UserResource> responseEntity = classInTest.getUser("1");
 
-        ResponseEntity<UserResource> responseEntity = classInTest.getUser("1");
-
-        assertTrue(responseEntity.getStatusCode() == HttpStatus.OK);
-        assertEquals(userResource, responseEntity.getBody());
+            assertTrue(responseEntity.getStatusCode() == HttpStatus.OK);
+            assertEquals(userResource, responseEntity.getBody());
+        }
     }
 
     @Test
@@ -71,14 +69,14 @@ public class UserRestEndpointUTest {
         user.setLastname("Lastname");
         user.setEmail("Email");
 
-        PowerMockito.mockStatic(UserResourceMapper.class);
+        try (MockedStatic<UserResourceMapper> mockedMapper = Mockito.mockStatic(UserResourceMapper.class)) {
+            mockedMapper.when(() -> UserResourceMapper.mapUserResourceToUser(userResource)).thenReturn(user);
+            Mockito.doNothing().when(userService).createUser(user);
 
-        PowerMockito.when(UserResourceMapper.mapUserResourceToUser(userResource)).thenReturn(user);
-        Mockito.doNothing().when(userService).createUser(user);
+            classInTest.createNewUser(userResource);
 
-        classInTest.createNewUser(userResource);
-
-        Mockito.verify(userService, Mockito.times(1)).createUser(user);
+            Mockito.verify(userService, Mockito.times(1)).createUser(user);
+        }
     }
 
     @Test
@@ -93,14 +91,14 @@ public class UserRestEndpointUTest {
         user.setLastname("Lastname");
         user.setEmail("Email");
 
-        PowerMockito.mockStatic(UserResourceMapper.class);
+        try (MockedStatic<UserResourceMapper> mockedMapper = Mockito.mockStatic(UserResourceMapper.class)) {
+            mockedMapper.when(() -> UserResourceMapper.mapUserResourceToUser(userResource)).thenReturn(user);
+            Mockito.doNothing().when(userService).updateUser(user);
 
-        PowerMockito.when(UserResourceMapper.mapUserResourceToUser(userResource)).thenReturn(user);
-        Mockito.doNothing().when(userService).updateUser(user);
+            classInTest.updateExistingUser(userResource);
 
-        classInTest.updateExistingUser(userResource);
-
-        Mockito.verify(userService, Mockito.times(1)).createUser(user);
+            Mockito.verify(userService, Mockito.times(1)).createUser(user);
+        }
     }
 
     @Test
