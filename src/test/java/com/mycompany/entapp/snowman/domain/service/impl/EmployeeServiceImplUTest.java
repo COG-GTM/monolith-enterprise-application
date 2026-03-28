@@ -13,14 +13,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmployeeServiceImplUTest {
 
-    private static final int EMPLOYEE_ID = 3;
+    private static final int EMPLOYEE_ID = 1;
 
     @Mock
     private EmployeeRepository employeeRepository;
@@ -67,8 +67,10 @@ public class EmployeeServiceImplUTest {
 
     @Test(expected = RuntimeException.class)
     public void testUpdateEmployeeShouldThrowExceptionWhenNoExistingEmployeeFound() {
+        Employee employee = new Employee();
+        employee.setId(EMPLOYEE_ID);
         Mockito.when(employeeRepository.findEmployee(EMPLOYEE_ID)).thenReturn(null);
-        classUnderTest.updateEmployee(new Employee());
+        classUnderTest.updateEmployee(employee);
     }
 
     @Test
@@ -84,7 +86,7 @@ public class EmployeeServiceImplUTest {
         Mockito.verify(employeeRepository, Mockito.times(1)).removeEmployee(EMPLOYEE_ID);
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testDeleteEmployeeShouldThrowExceptionWhenNoExistingEmployeeFound() {
         Mockito.when(employeeRepository.findEmployee(EMPLOYEE_ID)).thenReturn(null);
         classUnderTest.deleteEmployee(EMPLOYEE_ID);

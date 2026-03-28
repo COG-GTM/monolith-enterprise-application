@@ -8,17 +8,12 @@ package com.mycompany.entapp.snowman.domain.service.impl;
 import com.mycompany.entapp.snowman.domain.model.User;
 import com.mycompany.entapp.snowman.infrastructure.db.dao.UserDao;
 import com.mycompany.entapp.snowman.domain.service.UserService;
-import com.mycompany.entapp.snowman.infrastructure.rest.mappers.UserResourceMapper;
-import com.mycompany.entapp.snowman.infrastructure.rest.resources.UserResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 
@@ -70,13 +65,12 @@ public class UserServiceImplUTest {
     @Test
     public void testDeleteUser(){
         int userId = 1;
-        User user = getUser(1);
 
         Mockito.doNothing().when(userDao).removeUser(userId);
 
         userService.deleteUser(userId);
 
-        Mockito.verify(userService, Mockito.times(1)).deleteUser(userId);
+        Mockito.verify(userDao, Mockito.times(1)).removeUser(userId);
     }
 
     private User getUser(int userId) {

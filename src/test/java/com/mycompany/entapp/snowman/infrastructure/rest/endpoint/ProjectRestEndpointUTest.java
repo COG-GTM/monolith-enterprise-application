@@ -13,20 +13,17 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 
 import static org.junit.Assert.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(ProjectResourceMapper.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ProjectRestEndpointUTest {
 
     @Mock
@@ -43,7 +40,7 @@ public class ProjectRestEndpointUTest {
         projectResource.setTitle("Title");
         projectResource.setDateStarted(new DateTime(2018, 1,1, 12, 0, 0).toDate());
 
-        Mockito.doNothing().when(projectService).createProject(Matchers.any(Project.class));
+        Mockito.doNothing().when(projectService).createProject(Mockito.any(Project.class));
 
         ResponseEntity<?> response = classUnderTest.createProject(projectResource);
 
@@ -52,20 +49,20 @@ public class ProjectRestEndpointUTest {
 
     @Test
     public void testGetProject() {
-        PowerMockito.mockStatic(ProjectResourceMapper.class);
-
         Integer projectId = 1;
 
         Project project = new Project();
 
         ProjectResource expectedProjectResource = new ProjectResource();
 
-        PowerMockito.when(ProjectResourceMapper.mapToProjectResource(project)).thenReturn(expectedProjectResource);
-        Mockito.when(projectService.getProject(projectId)).thenReturn(project);
+        try (MockedStatic<ProjectResourceMapper> mockedStatic = Mockito.mockStatic(ProjectResourceMapper.class)) {
+            mockedStatic.when(() -> ProjectResourceMapper.mapToProjectResource(project)).thenReturn(expectedProjectResource);
+            Mockito.when(projectService.getProject(projectId)).thenReturn(project);
 
-        ResponseEntity response = classUnderTest.getProject(projectId);
+            ResponseEntity response = classUnderTest.getProject(projectId);
 
-        assertEquals(expectedProjectResource, response.getBody());
+            assertEquals(expectedProjectResource, response.getBody());
+        }
     }
 
     @Test
@@ -86,7 +83,7 @@ public class ProjectRestEndpointUTest {
         projectResource.setTitle("Title");
         projectResource.setDateStarted(new DateTime(2018, 1,1, 12, 0, 0).toDate());
 
-        Mockito.doNothing().when(projectService).createProject(Matchers.any(Project.class));
+        Mockito.doNothing().when(projectService).updateProject(Mockito.any(Project.class));
 
         ResponseEntity<?> response = classUnderTest.updateProject(projectResource);
 
