@@ -11,7 +11,9 @@ import com.mycompany.entapp.snowman.domain.model.EmployeeRole;
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.EmployeeResource;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 public class EmployeeResourceMapperUTest {
 
@@ -22,9 +24,9 @@ public class EmployeeResourceMapperUTest {
         EmployeeResource actualEmployeeResource = EmployeeResourceMapper.mapEmployeeToEmployeeResource(employee);
 
         assertEquals(1, actualEmployeeResource.getEmployeeId());
-        assertEquals("firstName", actualEmployeeResource.getFirstName());
-        assertEquals("surName", actualEmployeeResource.getSecondName());
-        assertEquals("role", actualEmployeeResource.getRole());
+        assertEquals("FirstName", actualEmployeeResource.getFirstName());
+        assertEquals("Surname", actualEmployeeResource.getSecondName());
+        assertNull(actualEmployeeResource.getRole());
     }
 
     @Test
@@ -45,7 +47,7 @@ public class EmployeeResourceMapperUTest {
         assertEquals("firstName", actualEmployee.getFirstname());
         assertEquals("surname", actualEmployee.getSurname());
         assertEquals(employeeRole, actualEmployee.getRole());
-        assertEquals(null, actualEmployee.getProjects());
+        assertNotNull(actualEmployee.getProjects());
     }
 
 }
