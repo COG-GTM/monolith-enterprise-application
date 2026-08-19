@@ -53,7 +53,7 @@ public class ClientRepositoryCachingITest {
         }
 
         @Bean
-        public ClientCacheAdapter clientCacheAdapter() {
+        public ClientCachePort clientCacheAdapter() {
             return new ClientCacheAdapter();
         }
 

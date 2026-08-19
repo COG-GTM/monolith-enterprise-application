@@ -42,14 +42,15 @@ public class InvoiceSystemAdapterUTest {
         ClientDTO clientDTO = new ClientDTO();
         clientDTO.setClientId(7);
         clientDTO.setClientName("Client");
+        Mockito.when(session.createObjectMessage(Mockito.any(ClientDTO.class))).thenReturn(objectMessage);
 
         systemUnderTest.sendProjectInfo(clientDTO);
 
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
         Mockito.verify(jmsTemplate).send(captor.capture());
 
-        Mockito.when(session.createObjectMessage(clientDTO)).thenReturn(objectMessage);
         assertEquals(objectMessage, captor.getValue().createMessage(session));
+        Mockito.verify(session).createObjectMessage(clientDTO);
         Mockito.verify(objectMessage).setJMSCorrelationID("ClientID-7");
     }
 }
