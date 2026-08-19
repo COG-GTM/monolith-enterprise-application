@@ -44,6 +44,10 @@ public class ClientServiceImpl implements ClientService {
 
         LOG.info("Retrieved client: {}", client);
 
+        if (client == null) {
+            return null;
+        }
+
         if (client.getProjects().isEmpty()) {
             // call Client System REST endpoint to get its project data.
 

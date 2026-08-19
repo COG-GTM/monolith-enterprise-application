@@ -10,7 +10,6 @@ import com.mycompany.entapp.snowman.domain.repository.ClientRepository;
 import com.mycompany.entapp.snowman.infrastructure.db.dao.ClientDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +30,7 @@ public class ClientRepositoryImpl implements ClientRepository {
         clientDao.saveClient(client);
     }
 
-    @CachePut(value = "clientFindCache", key = "#client.clientId")
+    @CacheEvict(value = "clientFindCache", key = "#client.id")
     @Override
     public void updateClient(Client client){
         clientDao.saveClient(client);
