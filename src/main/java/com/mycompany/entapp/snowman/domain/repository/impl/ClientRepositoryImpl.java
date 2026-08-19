@@ -25,13 +25,13 @@ public class ClientRepositoryImpl implements ClientRepository {
         return clientDao.getClient(clientId);
     }
 
-    @CacheEvict(value = "clientFindCache", key = "#client.id")
+    @CacheEvict(value = "clientFindCache", key = "#client.id", beforeInvocation = true)
     @Override
     public void createClient(Client client){
         clientDao.saveClient(client);
     }
 
-    @CacheEvict(value = "clientFindCache", key = "#client.id")
+    @CacheEvict(value = "clientFindCache", key = "#client.id", beforeInvocation = true)
     @Override
     public void updateClient(Client client){
         clientDao.saveClient(client);
