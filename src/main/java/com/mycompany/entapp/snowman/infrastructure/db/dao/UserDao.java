@@ -7,8 +7,12 @@ package com.mycompany.entapp.snowman.infrastructure.db.dao;
 
 import com.mycompany.entapp.snowman.domain.model.User;
 
+import java.util.List;
+
 public interface UserDao {
     User findUser(int userId);
+
+    List<User> searchUsersByUsername(String username);
 
     void saveUser(User user);
 
