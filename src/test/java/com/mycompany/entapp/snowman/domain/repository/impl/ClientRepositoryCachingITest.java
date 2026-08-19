@@ -11,6 +11,7 @@ import com.mycompany.entapp.snowman.domain.repository.ClientRepository;
 import com.mycompany.entapp.snowman.infrastructure.cache.ClientCachePort;
 import com.mycompany.entapp.snowman.infrastructure.cache.impl.ClientCacheAdapter;
 import com.mycompany.entapp.snowman.infrastructure.db.dao.ClientDao;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -71,6 +72,11 @@ public class ClientRepositoryCachingITest {
         clientDao = context.getBean(ClientDao.class);
     }
 
+    @After
+    public void tearDown() {
+        context.close();
+    }
+
     @Test
     public void testGetClientShouldOnlyHitTheDaoOnce() {
         Client client = client();
@@ -106,6 +112,18 @@ public class ClientRepositoryCachingITest {
         clientRepository.getClient(CLIENT_ID);
 
         Mockito.verify(clientDao, Mockito.times(2)).getClient(CLIENT_ID);
+    }
+
+    @Test
+    public void testCreateClientShouldEvictCachedMiss() {
+        Mockito.when(clientDao.getClient(CLIENT_ID)).thenReturn(null);
+        clientRepository.getClient(CLIENT_ID);
+
+        Client client = client();
+        clientRepository.createClient(client);
+        Mockito.when(clientDao.getClient(CLIENT_ID)).thenReturn(client);
+
+        assertEquals(client, clientRepository.getClient(CLIENT_ID));
     }
 
     @Test

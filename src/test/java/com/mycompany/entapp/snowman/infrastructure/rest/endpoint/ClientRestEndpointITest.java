@@ -8,6 +8,7 @@ package com.mycompany.entapp.snowman.infrastructure.rest.endpoint;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.entapp.snowman.domain.ProjectTestHelper;
+import com.mycompany.entapp.snowman.domain.exception.SnowmanException;
 import com.mycompany.entapp.snowman.domain.model.Client;
 import com.mycompany.entapp.snowman.domain.model.Project;
 import com.mycompany.entapp.snowman.domain.repository.impl.ClientRepositoryImpl;
@@ -30,6 +31,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -109,8 +112,10 @@ public class ClientRestEndpointITest {
             mockMvc.perform(post("/client/new")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"clientId\":1,\"clientName\":\"Client\",\"projects\":[]}"));
+            fail("expected the endpoint to reject a client that already exists");
         } catch (Exception e) {
-            // MockMvc rethrows the RuntimeException the endpoint wraps SnowmanException in
+            // the endpoint wraps SnowmanException in a RuntimeException, MockMvc rethrows it
+            assertTrue(rootCauseOf(e) instanceof SnowmanException);
         }
 
         Mockito.verify(clientDao, Mockito.never()).saveClient(Mockito.any(Client.class));
@@ -138,6 +143,14 @@ public class ClientRestEndpointITest {
             .andExpect(status().isOk());
 
         Mockito.verify(clientDao).removeClient(CLIENT_ID);
+    }
+
+    private Throwable rootCauseOf(Throwable throwable) {
+        Throwable cause = throwable;
+        while (cause.getCause() != null) {
+            cause = cause.getCause();
+        }
+        return cause;
     }
 
     private Client client() {
