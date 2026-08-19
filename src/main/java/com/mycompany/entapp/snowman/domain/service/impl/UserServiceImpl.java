@@ -11,6 +11,8 @@ import com.mycompany.entapp.snowman.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -20,6 +22,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUser(String userId) {
         return userDao.findUser(Integer.parseInt(userId));
+    }
+
+    @Override
+    public List<User> searchUsers(String username) {
+        return userDao.searchUsersByUsername(username);
     }
 
     @Override
