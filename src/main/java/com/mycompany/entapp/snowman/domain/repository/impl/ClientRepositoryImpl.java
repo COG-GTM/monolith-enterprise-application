@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ClientRepositoryImpl implements ClientRepository {
@@ -21,23 +22,27 @@ public class ClientRepositoryImpl implements ClientRepository {
     private ClientDao clientDao;
 
     @Cacheable(value = "clientFindCache", key = "#clientId")
+    @Transactional(readOnly = true)
     @Override
     public Client getClient(int clientId){
         return clientDao.getClient(clientId);
     }
 
+    @Transactional
     @Override
     public void createClient(Client client){
         clientDao.saveClient(client);
     }
 
     @CachePut(value = "clientFindCache", key = "#client.clientId")
+    @Transactional
     @Override
     public void updateClient(Client client){
         clientDao.saveClient(client);
     }
 
     @CacheEvict(value = "clientFindCache", key = "#clientId")
+    @Transactional
     @Override
     public void deleteClient(int clientId){
         clientDao.removeClient(clientId);
