@@ -10,6 +10,7 @@ import com.mycompany.entapp.snowman.domain.repository.ProjectRepository;
 import com.mycompany.entapp.snowman.domain.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -17,16 +18,19 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public Project getProject(int projectId) {
         return projectRepository.findProject(projectId);
     }
 
+    @Transactional
     @Override
     public void createProject(Project project) {
         projectRepository.saveProject(project);
     }
 
+    @Transactional
     @Override
     public void updateProject(Project project) {
         Project existingProject = getProject(project.getId());
@@ -37,6 +41,7 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.saveProject(project);
     }
 
+    @Transactional
     @Override
     public void deleteProject(int projectId) {
         Project existingProject = getProject(projectId);

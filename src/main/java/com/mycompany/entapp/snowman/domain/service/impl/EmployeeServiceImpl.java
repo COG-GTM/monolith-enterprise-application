@@ -10,6 +10,7 @@ import com.mycompany.entapp.snowman.domain.repository.EmployeeRepository;
 import com.mycompany.entapp.snowman.domain.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -17,16 +18,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public Employee getEmployee(int employeeId) {
         return employeeRepository.findEmployee(employeeId);
     }
 
+    @Transactional
     @Override
     public void createEmployee(Employee employee) {
         employeeRepository.saveEmployee(employee);
     }
 
+    @Transactional
     @Override
     public void updateEmployee(Employee employee) {
         Employee existingEmployee = getEmployee(employee.getId());
@@ -38,6 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
+    @Transactional
     @Override
     public void deleteEmployee(int employeeId) {
         Employee existingEmployee = getEmployee(employeeId);

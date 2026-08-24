@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class ClientServiceImpl implements ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public Client getClient(int clientId) {
         Client client = clientRepository.getClient(clientId);
@@ -82,6 +84,7 @@ public class ClientServiceImpl implements ClientService {
         return restTemplate.getForEntity(URI, String.class);
     }
 
+    @Transactional
     @Override
     public void createClient(Client client) throws SnowmanException {
 
@@ -94,6 +97,7 @@ public class ClientServiceImpl implements ClientService {
         clientRepository.createClient(client);
     }
 
+    @Transactional
     @Override
     public void updateClient(Client client) throws SnowmanException {
 
@@ -106,6 +110,7 @@ public class ClientServiceImpl implements ClientService {
         clientRepository.updateClient(client);
     }
 
+    @Transactional
     @Override
     public void deleteClient(int clientId) throws SnowmanException {
 
