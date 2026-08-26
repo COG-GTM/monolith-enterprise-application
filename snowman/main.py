@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 from snowman.config import get_settings
 from snowman.domain.exception import BusinessError, EntityNotFoundError, SnowmanError
 from snowman.infrastructure.rest.routers.employee import router as employee_router
+from snowman.infrastructure.rest.routers import client as client_router
 
 
 async def _business_error_handler(_: Request, exc: Exception) -> JSONResponse:
@@ -48,6 +49,7 @@ def create_app() -> FastAPI:
     # --- routers ---
     # WS1–WS5 append exactly one app.include_router(...) line each here.
     application.include_router(employee_router)
+    application.include_router(client_router.router)
 
     return application
 
