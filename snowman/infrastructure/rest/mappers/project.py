@@ -1,12 +1,18 @@
-"""Port of `ProjectResourceMapper.java` (WS3-owned; minimal WS2 stand-in)."""
+"""Project resource mappings."""
+
+from __future__ import annotations
 
 from collections.abc import Iterable
+from datetime import date
+from typing import cast
 
 from snowman.domain.model.project import Project
 from snowman.infrastructure.rest.resources.project import ProjectResource
 
 
 def to_resource(project: Project) -> ProjectResource:
+    """Map a project domain model to its REST resource."""
+
     return ProjectResource(
         projectId=project.id,
         title=project.project_title,
@@ -16,20 +22,25 @@ def to_resource(project: Project) -> ProjectResource:
 
 
 def to_project(resource: ProjectResource) -> Project:
-    # Java's mapToProject deliberately leaves the client unset (`//project.setClient`): the
-    # employee/client join is not part of the payload.
-    project = Project()
-    project.id = resource.projectId
-    project.project_title = resource.title
-    if resource.dateStarted is not None:
-        project.date_started = resource.dateStarted
-    project.date_ended = resource.dateEnded
-    return project
+    """Map a project REST resource to its domain model."""
 
-
-def to_resources(projects: Iterable[Project]) -> list[ProjectResource]:
-    return [to_resource(project) for project in projects]
+    # The client join is not part of the project payload.
+    # The resource permits missing dateStarted; the column does not, matching Java pass-through.
+    return Project(
+        id=resource.projectId,
+        project_title=resource.title,
+        date_started=cast(date, resource.dateStarted),
+        date_ended=resource.dateEnded,
+    )
 
 
 def to_projects(resources: Iterable[ProjectResource]) -> list[Project]:
+    """Map project resources to domain models."""
+
     return [to_project(resource) for resource in resources]
+
+
+def to_resources(projects: Iterable[Project]) -> list[ProjectResource]:
+    """Map projects to resources."""
+
+    return [to_resource(project) for project in projects]

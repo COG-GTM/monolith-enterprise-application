@@ -1,1 +1,1 @@
-"""Domain repository implementations."""
+"""Repository implementations."""

@@ -1,1 +1,1 @@
-"""Domain repository ports."""
+"""Domain repository ports and adapters."""

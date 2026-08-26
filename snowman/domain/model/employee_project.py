@@ -1,7 +1,10 @@
 """Employee-project association ORM model.
 
-The Java EmployeeProject, EmployeeProjectV2, and EmployeeProjectId classes represent
-alternate mappings of one table; the Python port keeps one composite-key mapping.
+The Java files ``domain/model/EmployeeProject.java``,
+``domain/model/EmployeeProjectV2.java``, and
+``domain/model/EmployeeProjectId.java`` represent alternate mappings of one table
+in different Hibernate dialects; the Python port keeps one composite-key mapping
+because Python has no reason to carry two mappings of the same table.
 """
 
 from __future__ import annotations
