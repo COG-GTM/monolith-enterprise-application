@@ -24,7 +24,7 @@ def test_payroll_adapter_sends_payload_and_metadata(broker) -> None:
 
     PayrollSystemAdapter(broker).send_employee_info(dto)
 
-    message = broker.sent[PAYROLL_SYSTEM_QUEUE.name][0]
+    message = broker.messages[PAYROLL_SYSTEM_QUEUE.name][0]
     assert message.payload == dto.model_dump(mode="json")
     assert message.headers == {"pristine": True}
     assert message.correlation_id == "EmployeeId-7"
@@ -43,7 +43,7 @@ def test_invoice_adapter_sends_payload_and_correlation_id(broker) -> None:
 
     InvoiceSystemAdapter(broker).send_project_info(dto)
 
-    message = broker.sent[INVOICE_SYSTEM_QUEUE.name][0]
+    message = broker.messages[INVOICE_SYSTEM_QUEUE.name][0]
     assert message.payload == dto.model_dump(mode="json")
     assert message.correlation_id == "ClientID-11"
     assert message.headers == {}
@@ -58,7 +58,7 @@ def test_notification_adapter_serializes_pydantic_payload(broker) -> None:
 
     NotificationAdapter(broker).broadcast_updates(dto)
 
-    message = broker.sent[NOTIFICATION_TOPIC.name][0]
+    message = broker.messages[NOTIFICATION_TOPIC.name][0]
     assert message.payload == dto.model_dump(mode="json")
     assert message.headers == {}
     assert message.correlation_id is None
@@ -73,4 +73,4 @@ def test_notification_adapter_passes_plain_payload_through(broker) -> None:
 
     NotificationAdapter(broker).broadcast_updates(payload)
 
-    assert broker.sent[NOTIFICATION_TOPIC.name][0].payload is payload
+    assert broker.messages[NOTIFICATION_TOPIC.name][0].payload is payload

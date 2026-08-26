@@ -1,6 +1,6 @@
 from datetime import date
-from types import SimpleNamespace
 
+from snowman.domain.model import Client, Employee, EmployeeProject, EmployeeRole, Project
 from snowman.infrastructure.messaging.converter import (
     to_client_dto,
     to_employee_dto,
@@ -9,11 +9,12 @@ from snowman.infrastructure.messaging.converter import (
 
 
 def test_project_converter_preserves_wire_field_names() -> None:
-    project = SimpleNamespace(
+    project = Project(
         id=4,
         project_title="Migration",
         date_started=date(2024, 2, 3),
         date_ended=None,
+        client_id=12,
     )
 
     dto = to_project_dto(project)
@@ -27,18 +28,19 @@ def test_project_converter_preserves_wire_field_names() -> None:
 
 
 def test_employee_converter_walks_employee_projects() -> None:
-    project = SimpleNamespace(
+    project = Project(
         id=4,
         project_title="Migration",
         date_started=None,
         date_ended=None,
+        client_id=12,
     )
-    employee = SimpleNamespace(
+    employee = Employee(
         id=9,
         firstname="Grace",
         surname="Hopper",
-        role=SimpleNamespace(role="Architect"),
-        projects=[SimpleNamespace(project=project)],
+        role=EmployeeRole(id=1, role="Architect"),
+        projects=[EmployeeProject(project=project)],
     )
 
     dto = to_employee_dto(employee)
@@ -60,7 +62,7 @@ def test_employee_converter_walks_employee_projects() -> None:
 
 
 def test_employee_converter_emits_none_for_missing_role() -> None:
-    employee = SimpleNamespace(
+    employee = Employee(
         id=9,
         firstname="Grace",
         surname="Hopper",
@@ -72,13 +74,14 @@ def test_employee_converter_emits_none_for_missing_role() -> None:
 
 
 def test_client_converter_maps_projects() -> None:
-    project = SimpleNamespace(
+    project = Project(
         id=4,
         project_title="Migration",
         date_started=None,
         date_ended=None,
+        client_id=12,
     )
-    client = SimpleNamespace(id=12, client_name="Acme", projects=[project])
+    client = Client(id=12, client_name="Acme", projects=[project])
 
     dto = to_client_dto(client)
 
