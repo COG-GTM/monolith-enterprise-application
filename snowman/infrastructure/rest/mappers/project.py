@@ -25,6 +25,7 @@ def to_project(resource: ProjectResource) -> Project:
     """Map a project REST resource to its domain model."""
 
     # The client join is not part of the project payload.
+    # The resource permits missing dateStarted; the column does not, matching Java pass-through.
     return Project(
         id=resource.projectId,
         project_title=resource.title,

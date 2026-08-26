@@ -24,3 +24,4 @@ class SqlAlchemyProjectRepository:
         entity = self.find_project(project_id)
         if entity is not None:
             self.session.delete(entity)
+            self.session.flush()

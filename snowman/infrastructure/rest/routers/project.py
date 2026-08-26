@@ -30,28 +30,14 @@ def create_project(
     return Response(status_code=200)
 
 
-def _update_project(
+@router.post("/update", response_class=Response, status_code=200)
+@router.post("/update}", include_in_schema=False, response_class=Response, status_code=200)
+def update_project(
     resource: ProjectResource,
     service: ProjectService = Depends(get_project_service),
 ) -> Response:
     service.update_project(to_project(resource))
     return Response(status_code=200)
-
-
-@router.post("/update", response_class=Response, status_code=200)
-def update_project(
-    resource: ProjectResource,
-    service: ProjectService = Depends(get_project_service),
-) -> Response:
-    return _update_project(resource, service)
-
-
-@router.post("/update}", include_in_schema=False, response_class=Response, status_code=200)
-def update_project_legacy(
-    resource: ProjectResource,
-    service: ProjectService = Depends(get_project_service),
-) -> Response:
-    return _update_project(resource, service)
 
 
 @router.get("/{projectId}", response_model=ProjectResource)

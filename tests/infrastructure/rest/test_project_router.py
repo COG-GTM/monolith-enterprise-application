@@ -2,61 +2,95 @@
 
 from datetime import date
 
-from snowman.domain.exception import EntityNotFoundError
+from snowman.domain.model.client import Client
 from snowman.domain.model.project import Project
-from snowman.infrastructure.rest.routers.project import get_project_service
 
 
-class FakeProjectService:
-    def __init__(self) -> None:
-        self.projects: dict[int, Project] = {
-            1: Project(
-                id=1,
-                project_title="Existing project",
-                date_started=date(2024, 1, 1),
-            )
-        }
-
-    def get_project(self, project_id: int) -> Project | None:
-        return self.projects.get(project_id)
-
-    def create_project(self, project: Project) -> None:
-        self.projects[project.id] = project
-
-    def update_project(self, project: Project) -> None:
-        if project.id not in self.projects:
-            raise EntityNotFoundError(f"Can't update an unknown project {project}")
-        self.projects[project.id] = project
-
-    def delete_project(self, project_id: int) -> None:
-        if project_id not in self.projects:
-            raise EntityNotFoundError(f"Can't remove an unknown project with id: {project_id}")
-        self.projects.pop(project_id, None)
+def seed_project(db_session, project_id: int = 1) -> Project:
+    project = Project(
+        id=project_id,
+        project_title="Existing project",
+        date_started=date(2024, 1, 1),
+        client=Client(id=100 + project_id, client_name="Router client"),
+    )
+    db_session.add(project)
+    db_session.flush()
+    return project
 
 
-def test_project_routes(client) -> None:
-    service = FakeProjectService()
-    client.app.dependency_overrides[get_project_service] = lambda: service
-    payload = {
-        "projectId": 1,
-        "title": "Updated project",
+def project_payload(project_id: int, title: str = "Updated project") -> dict[str, object]:
+    return {
+        "projectId": project_id,
+        "title": title,
         "dateStarted": "2024-01-01",
         "dateEnded": "2024-02-01",
     }
 
-    response = client.get("/project/1")
-    assert response.status_code == 200
-    assert set(response.json()) == {"projectId", "title", "dateStarted", "dateEnded"}
 
-    assert client.post("/project/create", json=payload).status_code == 200
-    assert client.post("/project/update", json=payload).status_code == 200
-    assert client.post("/project/update}", json=payload).status_code == 200
-    assert client.delete("/project/1/delete").status_code == 200
+def test_get_project_returns_resource_values(client, db_session) -> None:
+    seed_project(db_session)
+
+    response = client.get("/project/1")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "projectId": 1,
+        "title": "Existing project",
+        "dateStarted": "2024-01-01",
+        "dateEnded": None,
+    }
+
+
+def test_create_project_returns_empty_body_and_persists_changes(client, db_session) -> None:
+    seed_project(db_session)
+
+    response = client.post("/project/create", json=project_payload(1, "Created project"))
+
+    assert response.status_code == 200
+    assert response.text == ""
+    assert client.get("/project/1").json()["title"] == "Created project"
+
+
+def test_update_project_returns_empty_body_and_persists_changes(client, db_session) -> None:
+    seed_project(db_session)
+
+    response = client.post("/project/update", json=project_payload(1, "Updated project"))
+
+    assert response.status_code == 200
+    assert response.text == ""
+    assert client.get("/project/1").json()["title"] == "Updated project"
+
+
+def test_legacy_update_project_returns_empty_body(client, db_session) -> None:
+    seed_project(db_session)
+
+    response = client.post("/project/update}", json=project_payload(1, "Legacy project"))
+
+    assert response.status_code == 200
+    assert response.text == ""
+    assert client.get("/project/1").json()["title"] == "Legacy project"
+
+
+def test_delete_project_returns_empty_body_and_removes_project(client, db_session) -> None:
+    seed_project(db_session)
+
+    response = client.delete("/project/1/delete")
+
+    assert response.status_code == 200
+    assert response.text == ""
+    assert client.get("/project/1").status_code == 404
+
+
+def test_unknown_project_routes_return_not_found(client, db_session) -> None:
+    seed_project(db_session)
 
     assert client.get("/project/999").status_code == 404
-    assert client.post("/project/update", json={**payload, "projectId": 999}).status_code == 404
+    assert client.post("/project/update", json=project_payload(999)).status_code == 404
     assert client.delete("/project/999/delete").status_code == 404
 
-    openapi = client.get("/openapi.json").json()
-    assert "/project/update" in openapi["paths"]
-    assert "/project/update}" not in openapi["paths"]
+
+def test_project_openapi_exposes_only_canonical_update_route(client) -> None:
+    paths = client.get("/openapi.json").json()["paths"]
+
+    assert "/project/update" in paths
+    assert "/project/update}" not in paths

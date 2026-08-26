@@ -1,1 +1,1 @@
-"""Project repository implementations."""
+"""Repository implementations."""
