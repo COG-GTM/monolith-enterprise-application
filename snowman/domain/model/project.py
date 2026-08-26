@@ -21,8 +21,10 @@ class Project(Base):
     project_title: Mapped[str] = mapped_column("project_title", String(20), nullable=False)
     date_started: Mapped[date] = mapped_column("date_started", Date, nullable=False)
     date_ended: Mapped[date | None] = mapped_column("date_ended", Date)
-    client_id: Mapped[int] = mapped_column(ForeignKey("client.id", ondelete="CASCADE"), nullable=False)
-    client: Mapped["Client"] = relationship(back_populates="projects")
-    employee_projects: Mapped[list["EmployeeProject"]] = relationship(
+    client_id: Mapped[int] = mapped_column(
+        ForeignKey("client.id", ondelete="CASCADE"), nullable=False
+    )
+    client: Mapped[Client] = relationship(back_populates="projects")
+    employee_projects: Mapped[list[EmployeeProject]] = relationship(
         back_populates="project", lazy="select"
     )

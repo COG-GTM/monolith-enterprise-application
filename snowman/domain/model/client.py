@@ -17,4 +17,4 @@ class Client(Base):
     __tablename__ = "client"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
     client_name: Mapped[str] = mapped_column("client_name", String(30), nullable=False)
-    projects: Mapped[list["Project"]] = relationship(back_populates="client", lazy="select")
+    projects: Mapped[list[Project]] = relationship(back_populates="client", lazy="select")

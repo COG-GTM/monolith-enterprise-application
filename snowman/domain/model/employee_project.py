@@ -25,5 +25,5 @@ class EmployeeProject(Base):
     project_id: Mapped[int] = mapped_column(ForeignKey("project.id"), primary_key=True)
     date_started: Mapped[date | None] = mapped_column("date_started", Date)
     date_ended: Mapped[date | None] = mapped_column("date_ended", Date)
-    employee: Mapped["Employee"] = relationship(back_populates="projects")
-    project: Mapped["Project"] = relationship(back_populates="employee_projects")
+    employee: Mapped[Employee] = relationship(back_populates="projects")
+    project: Mapped[Project] = relationship(back_populates="employee_projects")

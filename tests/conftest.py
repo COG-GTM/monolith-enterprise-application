@@ -57,8 +57,11 @@ def client(
         yield db_session
 
     application.dependency_overrides[get_db] = override_get_db
-    with TestClient(application) as test_client:
-        yield test_client
+    try:
+        with TestClient(application) as test_client:
+            yield test_client
+    finally:
+        get_settings.cache_clear()
 
 
 @pytest.fixture

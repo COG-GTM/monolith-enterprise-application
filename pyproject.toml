@@ -38,7 +38,7 @@ packages = ["snowman"]
 line-length = 100
 
 [tool.ruff.lint]
-ignore = ["UP037"]
+select = ["E", "F", "I", "UP"]
 
 [tool.mypy]
 strict = true
