@@ -2,7 +2,7 @@
 
 **Status:** IN VERIFICATION — all nine workstreams implemented and integrated; integration PR open
 **Owner:** parent/orchestrator Devin session — https://app.devin.ai/sessions/60fa76476c5f49e9b134d472db69873d
-**Last updated:** 2026-08-26T21:45Z
+**Last updated:** 2026-08-26T22:10Z
 **Specs PR:** https://github.com/COG-GTM/monolith-enterprise-application/pull/60
 **Integration branch:** `devin/1787774668-integration-fastapi-port` (all of #61–#69 merged + parent conflict resolutions + two defect fixes)
 
@@ -100,6 +100,14 @@ These are deliberate; verification treats them as expected, not as parity defect
     (honored by the mapper, echoed in responses, omissible for Java-shaped payloads) so the create
     endpoint is usable. Decided by the parent after WS3 surfaced the constraint.
 
+12. **`save()` vs. merge on update, and the id-0 sentinel.** Both `EmployeeDaoImpl.saveEmployee`
+    and `ProjectDaoImpl.saveProject` persist with `getCurrentSession().save(entity)`, which *always*
+    inserts a row with a freshly generated identifier — so Java's `POST /employee/update` and
+    `POST /project/update` duplicate the record rather than updating it. The port uses
+    `session.merge(...)`, updating the existing row, and reproduces Hibernate's unsaved-value
+    handling for the primitive `int` id (`0` → database-assigned id, written back to the caller).
+    Reproducing the Java duplication would mean porting a defect.
+
 ---
 
 ## 2. Workstreams
@@ -160,6 +168,7 @@ WS0 (foundation)  ── hard blocker for everything else
 | 7 | 2026-08-26T21:20Z | Integration branch build | All eight branches merged onto WS0's branch with parent-decided conflict rules, then the full gate: `ruff check .`, `mypy snowman`, full `pytest`, `alembic upgrade head` on sqlite, `create_app()`, live `uvicorn` boot on port 8090 and per-endpoint curl checks against seeded data | PASS at 23b58e7 — `ruff` clean, `mypy` clean (91 files), `pytest` 118 passed, all four Alembic revisions apply with the Liquibase seed row counts, `GET /health` `{"status":"UP"}`, `GET /app/info` `{"id":1,"version":"1.0.0"}`, `GET /employee/1`, `/client/1` (nested project), `/project/1`, `/user/1` all 200 |
 | 8 | 2026-08-26T21:30Z | Parent hands-on API experiment against the running integrated app (seeded sqlite, uvicorn :8090) | Full employee lifecycle (`POST /employee/create` → `GET` → `POST /employee/update` → `DELETE /employee/{id}/delete` → `GET` 404); unknown ids on every aggregate; invalid role rejected; client lifecycle on Java's real paths (`POST /client/new`, `POST /client/update`, `DELETE /client/{clientId}`); `POST /user/create` + read-back; `POST /cache/clientFindCache/clear`; the hidden `POST /project/update}` alias (deviation 2); `GET /openapi.json` route inventory | PARTIAL — parity confirmed for all of the above (404s, role validation, alias, cache-clear response body). **Two defects found:** (a) `GET /client/{id}` returned 500 `DetachedInstanceError` on the next read after `POST /client/update`, because the repository cached an ORM instance whose lazy `projects` collection could no longer load once the request session closed — a cache clear "fixed" it, confirming the cache as the source; (b) `POST /project/create` 500'd on the `NOT NULL project.client_id` constraint (the deviation-11 gap) |
 | 9 | 2026-08-26T21:40Z | Defect fixes + final integrated gate | (a) client repository now forces `projects` to load and expunges the client+projects before caching, keeping Java's cache semantics (get = aside, update = unconditional put, delete = evict, create = no cache) with a real-cache regression test load→close→update→load; (b) WS0's `InMemoryMessageBroker.sent` alias removed — it existed only for WS6's tests, which now use the `messages` contract; (c) WS3's deviation-11 `clientId` and WS6's restacked head merged. Re-ran `ruff check .`, `mypy snowman`, `pytest`, and re-verified the endpoints against a restarted server | PASS at ef68c86 — `ruff` clean, `mypy` clean (91 files), `pytest` 122 passed; the client update→read sequence now returns the updated client (200) on both the cached and post-clear read; `POST /project/create` with `clientId` returns 200 and persists with `clientId` on read-back. Known remaining behavior: `POST /project/create` **without** `clientId` still 500s on the NOT NULL constraint — kept deliberately, since Java's `ProjectResource`/mapper have no client field at all (deviation 11 is additive only) |
+| 10 | 2026-08-26T22:10Z | Devin Review findings on integration PR [#70](https://github.com/COG-GTM/monolith-enterprise-application/pull/70) (8 across two passes) triaged against the Java sources | Each finding checked against the Java it ports. Faithful by design, documented and resolved: plaintext password in `GET /user/{userId}` (deviation 8 — thread left open for the owner's call on hashing + authn); `update_client`/`delete_client` blocking on the Client System call plus 4 retries for a projectless client; `update_client` persisting only `client_name` (the only other mapped column; `projects` is the `mappedBy` inverse side); `/health` reporting UP for an empty `app_info` (`select min(1) from app_info` is Java's own query); cached clients detached one relationship level (now pinned as a constraint in [002](002-client-slice.spec.md)). Fixed: the process-wide `TTLClientCache` leaking between tests (autouse reset fixture); `save_project` persisting new projects with id 0 while `save_employee` already mapped the sentinel — Java's `session.save()` always generates an id (`ProjectDaoImpl`/`EmployeeDaoImpl`), reproduced live as `GET /project/0`, see deviation 12; an incorrect "NOT NULL" comment on the nullable `employee_role_id` FK plus the missing test that a role-less employee update clears it | PASS at 022be7f — `ruff` clean, `mypy` clean (91 files), `pytest` 124 passed, including the two new regression tests (consecutive id-less project creates get distinct non-zero ids; role-less employee update nulls the FK) |
 
 ---
 
@@ -169,9 +178,8 @@ WS0 (foundation)  ── hard blocker for everything else
   constraint. This mirrors Java, whose `ProjectResourceMapper.mapToProject` leaves the client unset
   (`//project.setClient`); deviation 11 adds the optional field so the endpoint is usable, but the
   Java-shaped payload is preserved as-is rather than being papered over.
-* `POST /project/create` honours the client-supplied `projectId` (Java's mapper does the same via
-  `project.setId(projectResource.getProjectId())`), so it is an upsert-by-id rather than a
-  server-generated identity, despite the entity's `@GeneratedValue`.
+* Java's `save()` (see deviation 12) means the port's `/update` routes are the *intended* rather
+  than the literal Java behavior for existing rows.
 
 * Authentication/authorization: absent in the Java app; not introduced.
 * Password hashing (see deviation 8).

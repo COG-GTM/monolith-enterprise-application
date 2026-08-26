@@ -81,6 +81,14 @@ If WS7 has not landed yet, depend on the `ClientCache` protocol declared in
 [007](007-cache-scheduling.spec.md) and inject a null-object cache in tests; do not create a second
 cache implementation.
 
+**Cached-value constraint.** The cache outlives the request session that loaded the value, so
+anything put into it must already be loaded for every field the client resource mapper reads
+(scalars plus `projects`) and detached from that session — otherwise the next cache hit raises
+`DetachedInstanceError` on a lazy load. The port satisfies this by forcing `projects` to load and
+expunging the client and its projects before the put. If the cached graph ever needs to go deeper
+than `projects`, load the cached value with explicit eager-load options rather than expunging
+further objects one by one.
+
 ### R2.5 Service — `snowman/domain/service/client.py`
 
 `ClientService(repository, client_system: ClientSystemGateway)` preserving Java semantics:
