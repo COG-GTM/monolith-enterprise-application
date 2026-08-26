@@ -20,9 +20,9 @@ from snowman.domain.service.app_info import ApplicationInfoService
 from snowman.infrastructure.cache.client_cache_port import ClientCacheAdapter
 from snowman.infrastructure.db.app_info_dao import load_application_infos
 from snowman.infrastructure.management.router import router as management_router
+from snowman.infrastructure.rest.routers import client as client_router
 from snowman.infrastructure.rest.routers.app_info import router as app_info_router
 from snowman.infrastructure.rest.routers.employee import router as employee_router
-from snowman.infrastructure.rest.routers import client as client_router
 from snowman.infrastructure.rest.routers.project import router as project_router
 from snowman.infrastructure.rest.routers.user import router as user_router
 from snowman.infrastructure.scheduling.scheduler import shutdown_scheduler, start_scheduler

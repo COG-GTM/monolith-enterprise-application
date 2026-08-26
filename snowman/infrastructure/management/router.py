@@ -19,6 +19,7 @@ def health(session: Session = Depends(get_db)) -> dict[str, str]:
 
 
 @router.get("/cache/{cacheName}/clear")
+@router.post("/cache/{cacheName}/clear")
 def clear_cache(cacheName: str, request: Request) -> dict[str, int | str]:
     cache_service = cast(ClientCacheService, request.app.state.client_cache_service)
     logger.info("About to clear %s cache", cacheName)

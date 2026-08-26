@@ -16,6 +16,7 @@ from snowman.infrastructure.rest.resources.client import ClientResource
 
 router = APIRouter(prefix="/client", tags=["client"])
 
+
 def get_client_system() -> ClientSystemGateway:
     return HttpxClientSystemGateway()
 
