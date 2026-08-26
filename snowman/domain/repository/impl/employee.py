@@ -38,8 +38,10 @@ class SqlAlchemyEmployeeRepository:
 
         if employee.id == 0:
             employee.id = None  # type: ignore[assignment]
-        self._session.merge(employee)
+        merged = self._session.merge(employee)
         self._session.flush()
+        employee.id = merged.id
+        employee.employee_role_id = merged.employee_role_id
 
     def remove_employee(self, employee_id: int) -> None:
         """Delete an employee if it still exists."""

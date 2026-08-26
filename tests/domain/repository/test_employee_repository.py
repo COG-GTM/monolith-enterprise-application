@@ -47,7 +47,8 @@ def test_save_employee_inserts_and_resolves_detached_role(
 
     repository.save_employee(employee)
 
-    assert employee.id != 0
+    assert employee.id is not None
+    assert employee.id > 0
     assert employee.employee_role_id == seeded_role.id
     assert employee.role is seeded_role
     assert db_session.scalar(select(func.count()).select_from(EmployeeRole)) == 1
