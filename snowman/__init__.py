@@ -1,0 +1,1 @@
+"""Snowman application package."""
