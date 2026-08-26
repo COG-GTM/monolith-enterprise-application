@@ -18,13 +18,20 @@ def seed_project(db_session, project_id: int = 1) -> Project:
     return project
 
 
-def project_payload(project_id: int, title: str = "Updated project") -> dict[str, object]:
-    return {
+def project_payload(
+    project_id: int,
+    title: str = "Updated project",
+    client_id: int | None = None,
+) -> dict[str, object]:
+    payload: dict[str, object] = {
         "projectId": project_id,
         "title": title,
         "dateStarted": "2024-01-01",
         "dateEnded": "2024-02-01",
     }
+    if client_id is not None:
+        payload["clientId"] = client_id
+    return payload
 
 
 def test_get_project_returns_resource_values(client, db_session) -> None:
@@ -35,6 +42,7 @@ def test_get_project_returns_resource_values(client, db_session) -> None:
     assert response.status_code == 200
     assert response.json() == {
         "projectId": 1,
+        "clientId": 101,
         "title": "Existing project",
         "dateStarted": "2024-01-01",
         "dateEnded": None,
@@ -44,31 +52,62 @@ def test_get_project_returns_resource_values(client, db_session) -> None:
 def test_create_project_returns_empty_body_and_persists_changes(client, db_session) -> None:
     seed_project(db_session)
 
-    response = client.post("/project/create", json=project_payload(1, "Created project"))
+    response = client.post(
+        "/project/create",
+        json=project_payload(2, "Created project", client_id=101),
+    )
 
     assert response.status_code == 200
     assert response.text == ""
-    assert client.get("/project/1").json()["title"] == "Created project"
+    assert client.get("/project/2").json() == {
+        "projectId": 2,
+        "clientId": 101,
+        "title": "Created project",
+        "dateStarted": "2024-01-01",
+        "dateEnded": "2024-02-01",
+    }
 
 
 def test_update_project_returns_empty_body_and_persists_changes(client, db_session) -> None:
     seed_project(db_session)
 
-    response = client.post("/project/update", json=project_payload(1, "Updated project"))
+    response = client.post(
+        "/project/update",
+        json=project_payload(1, "Updated project", client_id=101),
+    )
 
     assert response.status_code == 200
     assert response.text == ""
     assert client.get("/project/1").json()["title"] == "Updated project"
+    assert client.get("/project/1").json()["clientId"] == 101
+
+
+def test_update_project_without_client_id_preserves_existing_client(
+    client,
+    db_session,
+) -> None:
+    seed_project(db_session)
+
+    response = client.post("/project/update", json=project_payload(1, "Updated without client"))
+
+    assert response.status_code == 200
+    assert response.text == ""
+    assert client.get("/project/1").json()["title"] == "Updated without client"
+    assert client.get("/project/1").json()["clientId"] == 101
 
 
 def test_legacy_update_project_returns_empty_body(client, db_session) -> None:
     seed_project(db_session)
 
-    response = client.post("/project/update}", json=project_payload(1, "Legacy project"))
+    response = client.post(
+        "/project/update}",
+        json=project_payload(1, "Legacy project", client_id=101),
+    )
 
     assert response.status_code == 200
     assert response.text == ""
     assert client.get("/project/1").json()["title"] == "Legacy project"
+    assert client.get("/project/1").json()["clientId"] == 101
 
 
 def test_delete_project_returns_empty_body_and_removes_project(client, db_session) -> None:

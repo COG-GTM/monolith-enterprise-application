@@ -11,6 +11,7 @@ class ProjectResource(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     projectId: int = 0
+    clientId: int | None = None
     title: str
     dateStarted: date | None = None
     dateEnded: date | None = None

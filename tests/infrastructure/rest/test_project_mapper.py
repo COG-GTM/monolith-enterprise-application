@@ -2,6 +2,8 @@
 
 from datetime import date
 
+from sqlalchemy import inspect
+
 from snowman.infrastructure.rest.mappers.project import (
     to_project,
     to_projects,
@@ -26,6 +28,22 @@ def test_to_project_and_to_resource_round_trip() -> None:
 
     assert result.model_dump() == resource().model_dump()
     assert mapped.client is None
+    assert mapped.client_id is None
+    assert "client_id" not in inspect(mapped).dict
+
+
+def test_to_project_sets_client_id_when_resource_provides_it() -> None:
+    mapped = to_project(resource())
+    mapped_with_client = to_project(resource().model_copy(update={"clientId": 42}))
+
+    assert mapped.client_id is None
+    assert mapped_with_client.client_id == 42
+
+
+def test_to_resource_surfaces_client_id() -> None:
+    project = to_project(resource().model_copy(update={"clientId": 42}))
+
+    assert to_resource(project).clientId == 42
 
 
 def test_to_projects_and_to_resources() -> None:
