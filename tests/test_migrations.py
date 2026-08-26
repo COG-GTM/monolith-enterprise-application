@@ -9,6 +9,8 @@ from alembic.migration import MigrationContext
 from sqlalchemy import create_engine, func, inspect, select
 from sqlalchemy.engine import Engine
 
+# Register the ORM models in Base.metadata for migration assertions.
+import snowman.domain.model  # noqa: F401
 from alembic import command
 from snowman.config import get_settings
 from snowman.db.base import Base
