@@ -34,6 +34,7 @@ class SqlAlchemyEmployeeRepository:
             if persistent_role is None:
                 raise SnowmanError(f"Unknown employee role: {role_name}")
             employee.role = persistent_role
+            employee.employee_role_id = persistent_role.id
 
         if employee.id == 0:
             employee.id = None  # type: ignore[assignment]

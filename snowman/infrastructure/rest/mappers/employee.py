@@ -23,9 +23,7 @@ def to_employee(resource: EmployeeResource) -> Employee:
         firstname=resource.firstName,
         surname=resource.secondName,
     )
+    # A null role would violate the employee_role NOT NULL column.
     if resource.role is not None:
         employee.role = EmployeeRole(role=resource.role)
-    else:
-        # A null role would violate the employee_role NOT NULL column.
-        employee.role = None
     return employee
