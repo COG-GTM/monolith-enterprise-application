@@ -67,7 +67,6 @@ class TTLClientCache:
     def get(self, client_id: int) -> Client | None:
         with self._lock:
             self._cache.expire()
-            self._prune_last_access()
             last_access = self._last_access.get(client_id)
             if last_access is None:
                 return None
