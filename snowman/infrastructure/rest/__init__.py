@@ -1,1 +1,1 @@
-"""REST infrastructure."""
+"""REST adapters."""
