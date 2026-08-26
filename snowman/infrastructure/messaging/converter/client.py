@@ -1,0 +1,11 @@
+from snowman.infrastructure.messaging.converter.project import to_project_dtos
+from snowman.infrastructure.messaging.converter.protocols import ClientLike
+from snowman.infrastructure.messaging.dto import ClientDTO
+
+
+def to_client_dto(client: ClientLike) -> ClientDTO:
+    return ClientDTO(
+        clientId=client.id,
+        clientName=client.client_name,
+        projectDTOS=to_project_dtos(client.projects),
+    )
