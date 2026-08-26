@@ -22,6 +22,13 @@ class SqlAlchemyClientRepository:
         self._session = session
         self._cache = cache
 
+    def _detach_for_cache(self, client: Client) -> Client:
+        projects = list(client.projects)
+        for project in projects:
+            self._session.expunge(project)
+        self._session.expunge(client)
+        return client
+
     def get_client(self, client_id: int) -> Client | None:
         cached = self._cache.get(client_id)
         if cached is not None:
@@ -29,7 +36,7 @@ class SqlAlchemyClientRepository:
 
         client = self._session.get(Client, client_id)
         if client is not None:
-            self._cache.put(client_id, client)
+            self._cache.put(client_id, self._detach_for_cache(client))
         return client
 
     def create_client(self, client: Client) -> None:
@@ -46,7 +53,7 @@ class SqlAlchemyClientRepository:
         else:
             existing.client_name = client.client_name
         self._session.flush()
-        self._cache.put(target.id, target)
+        self._cache.put(target.id, self._detach_for_cache(target))
 
     def delete_client(self, client_id: int) -> None:
         client = self._session.get(Client, client_id)

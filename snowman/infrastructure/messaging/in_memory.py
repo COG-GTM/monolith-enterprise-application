@@ -14,12 +14,6 @@ class InMemoryMessageBroker:
     def __init__(self) -> None:
         self.messages: dict[str, list[Message]] = defaultdict(list)
 
-    @property
-    def sent(self) -> dict[str, list[Message]]:
-        """Expose the recorded messages under the WS6 test adapter name."""
-
-        return self.messages
-
     def send(self, destination: Destination, message: Message) -> None:
         self.messages[destination.name].append(message)
         logger.info("Sent message to %s", destination.name)
