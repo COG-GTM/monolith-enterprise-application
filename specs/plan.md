@@ -2,7 +2,8 @@
 
 **Status:** IN PROGRESS
 **Owner:** parent/orchestrator Devin session — https://app.devin.ai/sessions/60fa76476c5f49e9b134d472db69873d
-**Last updated:** 2026-08-26T19:45Z
+**Last updated:** 2026-08-26T20:10Z
+**Specs PR:** https://github.com/COG-GTM/monolith-enterprise-application/pull/60
 
 This file is the SINGLE SOURCE OF TRUTH for the migration. The parent session owns all writes to
 this file. Child sessions MUST NOT edit it — they report their session URL, PR URL and status back
@@ -101,7 +102,7 @@ Statuses: `NOT_STARTED` / `DELEGATED` / `IN_PROGRESS` / `IN_VERIFICATION` / `DON
 
 | ID | Description | Spec | Child session | Status | PR | Last updated |
 |---|---|---|---|---|---|---|
-| WS0 | Foundation: packaging, settings, FastAPI app factory, SQLAlchemy base/session, Alembic init, messaging port base, pytest harness | [000-foundation.spec.md](000-foundation.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
+| WS0 | Foundation: packaging, settings, FastAPI app factory, SQLAlchemy base/session, Alembic init, messaging port base, pytest harness | [000-foundation.spec.md](000-foundation.spec.md) | [0d4e3a2f](https://app.devin.ai/sessions/0d4e3a2f72f44455a20a84d8ba55945d) | DELEGATED | — | 2026-08-26T20:10Z |
 | WS1 | Employee slice: model, resources, mapper, repository, service, router, tests | [001-employee-slice.spec.md](001-employee-slice.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
 | WS2 | Client slice incl. cache-aside repository + Client System REST call | [002-client-slice.spec.md](002-client-slice.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
 | WS3 | Project slice incl. `EmployeeProject` join entities | [003-project-slice.spec.md](003-project-slice.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
@@ -140,7 +141,8 @@ WS0 (foundation)  ── hard blocker for everything else
 
 | # | When | Scope | Checks run | Result |
 |---|---|---|---|---|
-| — | — | — | — | pending first child completion |
+| 1 | 2026-08-26T20:10Z | Specs authored (plan + WS0–WS8) | Spec completeness review against the Java tree: every model, service, endpoint, mapper, messaging port/adapter/DTO, cache, scheduler and Liquibase changeset is claimed by exactly one workstream; *Files owned* sections are disjoint | PASS — specs PR #60 opened |
+| 2 | 2026-08-26T20:10Z | WS0 dispatched | Child session created via Devin API with spec path, Java refs, acceptance commands and boundary constraints | DELEGATED — awaiting PR |
 
 ---
 
