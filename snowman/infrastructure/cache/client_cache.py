@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable
+from threading import RLock
 from typing import Protocol
 
 from cachetools import TTLCache
@@ -34,7 +35,10 @@ class ClientCache(Protocol):
 
 
 class TTLClientCache:
-    """In-memory client cache with absolute TTL and per-key idle expiry."""
+    """In-memory client cache with absolute TTL and per-key idle expiry.
+
+    Access is guarded by one reentrant lock for thread safety.
+    """
 
     def __init__(
         self,
@@ -50,32 +54,48 @@ class TTLClientCache:
         )
         self._tti_seconds = configured.cache_tti_seconds
         self._last_access: dict[int, float] = {}
+        self._lock = RLock()
+
+    def _prune_last_access(self) -> None:
+        cache_keys = set(self._cache)
+        self._last_access = {
+            client_id: last_access
+            for client_id, last_access in self._last_access.items()
+            if client_id in cache_keys
+        }
 
     def get(self, client_id: int) -> Client | None:
-        self._cache.expire()
-        last_access = self._last_access.get(client_id)
-        if last_access is None:
-            return None
-        now = self._clock()
-        if now - last_access >= self._tti_seconds:
-            self._cache.pop(client_id, None)
-            self._last_access.pop(client_id, None)
-            return None
-        client = self._cache.get(client_id)
-        if client is None:
-            self._last_access.pop(client_id, None)
-            return None
-        self._last_access[client_id] = now
-        return client
+        with self._lock:
+            self._cache.expire()
+            self._prune_last_access()
+            last_access = self._last_access.get(client_id)
+            if last_access is None:
+                return None
+            now = self._clock()
+            if now - last_access >= self._tti_seconds:
+                self._cache.pop(client_id, None)
+                self._last_access.pop(client_id, None)
+                return None
+            client = self._cache.get(client_id)
+            if client is None:
+                self._last_access.pop(client_id, None)
+                return None
+            self._last_access[client_id] = now
+            return client
 
     def put(self, client_id: int, client: Client) -> None:
-        self._cache[client_id] = client
-        self._last_access[client_id] = self._clock()
+        with self._lock:
+            self._cache[client_id] = client
+            self._last_access[client_id] = self._clock()
+            self._cache.expire()
+            self._prune_last_access()
 
     def evict(self, client_id: int) -> None:
-        self._cache.pop(client_id, None)
-        self._last_access.pop(client_id, None)
+        with self._lock:
+            self._cache.pop(client_id, None)
+            self._last_access.pop(client_id, None)
 
     def clear(self) -> None:
-        self._cache.clear()
-        self._last_access.clear()
+        with self._lock:
+            self._cache.clear()
+            self._last_access.clear()

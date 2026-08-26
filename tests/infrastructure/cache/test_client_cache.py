@@ -53,6 +53,28 @@ def test_idle_expiry_with_injected_clock() -> None:
     assert cache.get(1) is None
 
 
+def test_last_access_is_bounded_after_eviction() -> None:
+    settings = Settings(cache_max_entries=2, cache_ttl_seconds=600, cache_tti_seconds=300)
+    cache = TTLClientCache(settings)
+
+    for client_id in range(5):
+        cache.put(client_id, Client(id=client_id, client_name=str(client_id)))
+
+    assert len(cache._last_access) <= 2
+    assert set(cache._last_access).issubset(cache._cache)
+
+
+def test_ttl_expiry_prunes_last_access_with_injected_clock() -> None:
+    current = [100.0]
+    settings = Settings(cache_max_entries=10, cache_ttl_seconds=10, cache_tti_seconds=100)
+    cache = TTLClientCache(settings, clock=lambda: current[0])
+    cache.put(1, Client(id=1, client_name="one"))
+
+    current[0] = 110.0
+    assert cache.get(1) is None
+    assert 1 not in cache._last_access
+
+
 def test_get_client_cache_is_process_wide_singleton() -> None:
     get_client_cache.cache_clear()
     first = get_client_cache()
