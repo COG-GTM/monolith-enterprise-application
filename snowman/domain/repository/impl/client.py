@@ -50,6 +50,10 @@ class SqlAlchemyClientRepository:
     def delete_client(self, client_id: int) -> None:
         client = self._session.get(Client, client_id)
         if client is not None:
+            # `project.client_id` is NOT NULL with a DB-level `ON DELETE CASCADE`; the children are
+            # removed explicitly so the ORM never tries to disassociate them by nulling the column.
+            for project in list(client.projects):
+                self._session.delete(project)
             self._session.delete(client)
             self._session.flush()
         self._cache.evict(client_id)

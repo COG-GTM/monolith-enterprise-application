@@ -84,3 +84,23 @@ def test_delete_client_evicts_the_key(db_session: Session) -> None:
 
     assert db_session.get(Client, 4) is None
     assert cache.operations == [("evict", 4)]
+
+
+def test_delete_client_cascades_to_its_projects(db_session: Session) -> None:
+    from datetime import date
+
+    from snowman.domain.model.project import Project
+
+    _persist_client(db_session, client_id=5)
+    project = Project()
+    project.project_title = "Snowman"
+    project.date_started = date(2018, 1, 1)
+    project.client_id = 5
+    db_session.add(project)
+    db_session.flush()
+    repository = SqlAlchemyClientRepository(db_session, FakeClientCache())
+
+    repository.delete_client(5)
+
+    assert db_session.get(Client, 5) is None
+    assert db_session.query(Project).filter_by(client_id=5).count() == 0
