@@ -16,7 +16,8 @@ alembic downgrade base
 ```
 
 Set `SNOWMAN_DATABASE_URL` to use MySQL, using the credentials from
-`src/main/resources/db/liquibase.properties`:
+`src/main/resources/db/liquibase.properties`.  The MySQL driver is not a
+project dependency, so install it first with `pip install pymysql`:
 
 ```shell
 export SNOWMAN_DATABASE_URL='mysql+pymysql://username:password@localhost:3306/snowman'
