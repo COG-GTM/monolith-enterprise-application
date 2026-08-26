@@ -46,6 +46,7 @@ def create_app() -> FastAPI:
 
     # --- routers ---
     # WS1–WS5 append exactly one app.include_router(...) line each here.
+    application.include_router(__import__("snowman.infrastructure.rest.routers.project", fromlist=["router"]).router)  # noqa: E501
 
     return application
 
