@@ -12,7 +12,19 @@ from sqlalchemy.pool import StaticPool
 from snowman.config import get_settings
 from snowman.db.base import Base
 from snowman.db.session import get_db
+from snowman.infrastructure.cache.deps import get_client_cache
 from snowman.infrastructure.messaging.in_memory import InMemoryMessageBroker
+
+
+@pytest.fixture(autouse=True)
+def clean_client_cache() -> Iterator[None]:
+    get_client_cache().clear()
+    get_client_cache.cache_clear()
+    try:
+        yield
+    finally:
+        get_client_cache().clear()
+        get_client_cache.cache_clear()
 
 
 @pytest.fixture(scope="session")
