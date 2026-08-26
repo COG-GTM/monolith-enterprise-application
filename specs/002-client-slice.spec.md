@@ -83,13 +83,14 @@ cache implementation.
 
 ### R2.5 Service — `snowman/domain/service/client.py`
 
-`ClientService(repository, client_system: ClientSystemGateway, )` preserving Java semantics:
+`ClientService(repository, client_system: ClientSystemGateway)` preserving Java semantics:
 
 * `get_client(client_id)`: load from repository; **if the loaded client has no projects**, call the
   Client System gateway (`Settings.client_system_url`, `{clientId}` substituted) and retry while the
-  response status is not 200, up to `MAX_RETRIES = 3` extra attempts (Java's loop breaks when
-  `retryCount > MAX_RETRIES`, i.e. at most 5 requests total: 1 initial + 4 loop iterations — replicate
-  that bound exactly and cover it with a test). Then `process_response(body, client)`.
+  response status is not 200. `MAX_RETRIES = 3`, but the loop breaks only once `retryCount >
+  MAX_RETRIES`, so the real bound is **4 retries / 5 requests total** (1 initial + 4 loop
+  iterations) — replicate that off-by-one bound exactly and cover it with a test. Then
+  `process_response(body, client)`.
   `process_response` in Java parses the JSON, reads the `project` node, builds a `Set<Project>` with
   one empty `Project()` and **discards it** — port it as a function that parses the JSON, logs, and
   makes no mutation, with a `# Parity: Java ClientServiceImpl.processResponse discards its result`
