@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 from snowman.config import get_settings
 from snowman.domain.exception import BusinessError, EntityNotFoundError, SnowmanError
+from snowman.infrastructure.scheduling.scheduler import shutdown_scheduler, start_scheduler
 
 
 async def _business_error_handler(_: Request, exc: Exception) -> JSONResponse:
@@ -28,12 +29,10 @@ async def _lifespan(_: FastAPI) -> AsyncIterator[None]:
     """
 
     if get_settings().scheduler_enabled:
-        # WS7 will start the scheduler here.
-        pass
+        start_scheduler(_)
     yield
     if get_settings().scheduler_enabled:
-        # WS7 will stop the scheduler here.
-        pass
+        shutdown_scheduler(_)
 
 
 def create_app() -> FastAPI:
