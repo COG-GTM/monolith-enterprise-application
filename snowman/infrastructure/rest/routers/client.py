@@ -6,22 +6,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from snowman.db.session import get_db
-from snowman.domain.repository.client import ClientCache, NullClientCache
+from snowman.domain.repository.client import ClientCache
 from snowman.domain.repository.impl.client import SqlAlchemyClientRepository
 from snowman.domain.service.client import ClientService, ClientSystemGateway
+from snowman.infrastructure.cache.deps import get_client_cache
 from snowman.infrastructure.rest.client_system import HttpxClientSystemGateway
 from snowman.infrastructure.rest.mappers import client as client_mapper
 from snowman.infrastructure.rest.resources.client import ClientResource
 
 router = APIRouter(prefix="/client", tags=["client"])
-
-_NULL_CACHE = NullClientCache()
-
-
-def get_client_cache() -> ClientCache:
-    # Overridden with WS7's shared `clientFindCache` instance once it lands.
-    return _NULL_CACHE
-
 
 def get_client_system() -> ClientSystemGateway:
     return HttpxClientSystemGateway()

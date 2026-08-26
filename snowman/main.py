@@ -17,6 +17,7 @@ from snowman.domain.exception import BusinessError, EntityNotFoundError, Snowman
 from snowman.domain.model.app_info import AppInfo
 from snowman.domain.repository.impl.app_info import ApplicationInfoRepositoryImpl
 from snowman.domain.service.app_info import ApplicationInfoService
+from snowman.infrastructure.cache.client_cache_port import ClientCacheAdapter
 from snowman.infrastructure.db.app_info_dao import load_application_infos
 from snowman.infrastructure.management.router import router as management_router
 from snowman.infrastructure.rest.routers.app_info import router as app_info_router
@@ -24,12 +25,7 @@ from snowman.infrastructure.rest.routers.employee import router as employee_rout
 from snowman.infrastructure.rest.routers import client as client_router
 from snowman.infrastructure.rest.routers.project import router as project_router
 from snowman.infrastructure.rest.routers.user import router as user_router
-
-class _NoOpClientCachePort:
-    """Default wiring until WS7 provides the concrete cache adapter."""
-
-    def refresh_cache(self) -> None:
-        pass
+from snowman.infrastructure.scheduling.scheduler import shutdown_scheduler, start_scheduler
 
 
 def _load_app_infos() -> list[AppInfo]:
@@ -38,7 +34,6 @@ def _load_app_infos() -> list[AppInfo]:
         return load_application_infos(session)
     finally:
         session.close()
->>>>>>> origin/devin/1787773641-ws5-appinfo-management
 
 
 async def _business_error_handler(_: Request, exc: Exception) -> JSONResponse:
@@ -51,20 +46,12 @@ async def _not_found_error_handler(_: Request, exc: Exception) -> JSONResponse:
 
 @asynccontextmanager
 async def _lifespan(application: FastAPI) -> AsyncIterator[None]:
-    """Manage optional infrastructure services.
-
-    WS7 owns the scheduler implementation. Until it is available, the enabled branch
-    intentionally remains a no-op while retaining the application lifecycle seam.
-    """
-
     if get_settings().scheduler_enabled:
-        # WS7 will start the scheduler here.
-        pass
+        start_scheduler(application)
     application.state.application_info_repository.initialize()
     yield
     if get_settings().scheduler_enabled:
-        # WS7 will stop the scheduler here.
-        pass
+        shutdown_scheduler()
 
 
 def create_app() -> FastAPI:
@@ -74,7 +61,7 @@ def create_app() -> FastAPI:
     application = FastAPI(title="Snowman", version="1.0.0", lifespan=_lifespan)
     application.state.application_info_repository = repository
     application.state.app_info_service = ApplicationInfoService(repository)
-    cache_port: ClientCachePort = _NoOpClientCachePort()
+    cache_port: ClientCachePort = ClientCacheAdapter()
     application.state.client_cache_service = ClientCacheService(cache_port)
     application.add_exception_handler(SnowmanError, _business_error_handler)
     application.add_exception_handler(BusinessError, _business_error_handler)
