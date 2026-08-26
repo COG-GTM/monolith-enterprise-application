@@ -82,6 +82,20 @@ def test_update_project_returns_empty_body_and_persists_changes(client, db_sessi
     assert client.get("/project/1").json()["clientId"] == 101
 
 
+def test_update_project_without_client_id_preserves_existing_client(
+    client,
+    db_session,
+) -> None:
+    seed_project(db_session)
+
+    response = client.post("/project/update", json=project_payload(1, "Updated without client"))
+
+    assert response.status_code == 200
+    assert response.text == ""
+    assert client.get("/project/1").json()["title"] == "Updated without client"
+    assert client.get("/project/1").json()["clientId"] == 101
+
+
 def test_legacy_update_project_returns_empty_body(client, db_session) -> None:
     seed_project(db_session)
 
