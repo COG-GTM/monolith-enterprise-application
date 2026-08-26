@@ -1,0 +1,9 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.6
+sqlalchemy>=2.0.36
+pydantic>=2.10
+pydantic-settings>=2.6
+alembic>=1.14
+apscheduler>=3.10.4
+cachetools>=5.5
+httpx>=0.28

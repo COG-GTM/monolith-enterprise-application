@@ -39,3 +39,6 @@ Thumbs.db
 # Environment files #
 #####################
 .env
+.venv/
+__pycache__/
+*.egg-info/

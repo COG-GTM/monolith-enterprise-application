@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "snowman"
+version = "1.0.0"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.6",
+    "sqlalchemy>=2.0.36",
+    "pydantic>=2.10",
+    "pydantic-settings>=2.6",
+    "alembic>=1.14",
+    "apscheduler>=3.10.4",
+    "cachetools>=5.5",
+    "httpx>=0.28",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "types-cachetools>=5.5.0",
+]
+
+[project.scripts]
+snowman = "snowman.main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["snowman"]
+
+[tool.ruff]
+line-length = 100
+exclude = [".venv"]
+
+[tool.mypy]
+strict = true
+files = ["snowman"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
