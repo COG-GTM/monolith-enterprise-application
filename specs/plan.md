@@ -2,7 +2,7 @@
 
 **Status:** IN PROGRESS
 **Owner:** parent/orchestrator Devin session — https://app.devin.ai/sessions/60fa76476c5f49e9b134d472db69873d
-**Last updated:** 2026-08-26T20:35Z
+**Last updated:** 2026-08-26T21:05Z
 **Specs PR:** https://github.com/COG-GTM/monolith-enterprise-application/pull/60
 
 This file is the SINGLE SOURCE OF TRUTH for the migration. The parent session owns all writes to
@@ -93,6 +93,11 @@ These are deliberate; verification treats them as expected, not as parity defect
 10. **Messaging wire format.** Java sends JMS `ObjectMessage` (Java serialization). The port
     serializes DTOs as JSON; destinations, correlation ids and per-message metadata are preserved
     verbatim, but a Java `ObjectMessage` consumer could not read the Python payload.
+11. **`ProjectResource.clientId` is additive.** Java's `ProjectResource` carries no client, and
+    `mapToProject` never sets one, while `project.client_id` is `NOT NULL` — so `POST /project/create`
+    cannot create a new project in either language. The port adds an optional `clientId` field
+    (honored by the mapper, echoed in responses, omissible for Java-shaped payloads) so the create
+    endpoint is usable. Decided by the parent after WS3 surfaced the constraint.
 
 ---
 
@@ -102,15 +107,15 @@ Statuses: `NOT_STARTED` / `DELEGATED` / `IN_PROGRESS` / `IN_VERIFICATION` / `DON
 
 | ID | Description | Spec | Child session | Status | PR | Last updated |
 |---|---|---|---|---|---|---|
-| WS0 | Foundation: packaging, settings, FastAPI app factory, SQLAlchemy base/session, Alembic init, messaging port base, pytest harness | [000-foundation.spec.md](000-foundation.spec.md) | [0d4e3a2f](https://app.devin.ai/sessions/0d4e3a2f72f44455a20a84d8ba55945d) | DELEGATED | — | 2026-08-26T20:10Z |
-| WS1 | Employee slice: model, resources, mapper, repository, service, router, tests | [001-employee-slice.spec.md](001-employee-slice.spec.md) | [b950c348](https://app.devin.ai/sessions/b950c34830174b3fbc55ba2a352897ce) | DELEGATED | — | 2026-08-26T20:35Z |
-| WS2 | Client slice incl. cache-aside repository + Client System REST call | [002-client-slice.spec.md](002-client-slice.spec.md) | [810f096a](https://app.devin.ai/sessions/810f096a209e4d60874a4b98d948fbad) | DELEGATED | — | 2026-08-26T20:35Z |
-| WS3 | Project slice incl. `EmployeeProject` join entities | [003-project-slice.spec.md](003-project-slice.spec.md) | [6fb8705b](https://app.devin.ai/sessions/6fb8705b3d364531af58272ca8a1ab47) | DELEGATED | — | 2026-08-26T20:35Z |
-| WS4 | User slice (raw-SQL DAO equivalent) | [004-user-slice.spec.md](004-user-slice.spec.md) | [8db77d23](https://app.devin.ai/sessions/8db77d2354674246aaa56bde27672da3) | DELEGATED | — | 2026-08-26T20:35Z |
-| WS5 | AppInfo + management endpoints (`/app/info`, `/health`, `/cache/{name}/clear`) | [005-appinfo-management.spec.md](005-appinfo-management.spec.md) | [74a5b0fc](https://app.devin.ai/sessions/74a5b0fcb9654a118944e7909aa03f70) | DELEGATED | — | 2026-08-26T20:35Z |
-| WS6 | Messaging layer: payroll/invoice/notification ports, adapters, converters, DTOs | [006-messaging.spec.md](006-messaging.spec.md) | [b423672f](https://app.devin.ai/sessions/b423672f49ba470fbee4c4ff32806d71) | DELEGATED | — | 2026-08-26T20:35Z |
-| WS7 | Caching + scheduling: `clientFindCache`, APScheduler reporting snapshot | [007-cache-scheduling.spec.md](007-cache-scheduling.spec.md) | [322fd820](https://app.devin.ai/sessions/322fd8202c354a6f96a49499b050749e) | DELEGATED | — | 2026-08-26T20:35Z |
-| WS8 | Alembic migrations + seed data for the 4 Liquibase changelogs | [008-migrations-seed.spec.md](008-migrations-seed.spec.md) | [0f62f040](https://app.devin.ai/sessions/0f62f04063d44c4eb8362aba8b38cf0a) | DELEGATED | — | 2026-08-26T20:35Z |
+| WS0 | Foundation: packaging, settings, FastAPI app factory, SQLAlchemy base/session, Alembic init, messaging port base, pytest harness | [000-foundation.spec.md](000-foundation.spec.md) | [0d4e3a2f](https://app.devin.ai/sessions/0d4e3a2f72f44455a20a84d8ba55945d) | IN_VERIFICATION | [#61](https://github.com/COG-GTM/monolith-enterprise-application/pull/61) | 2026-08-26T21:05Z |
+| WS1 | Employee slice: model, resources, mapper, repository, service, router, tests | [001-employee-slice.spec.md](001-employee-slice.spec.md) | [b950c348](https://app.devin.ai/sessions/b950c34830174b3fbc55ba2a352897ce) | IN_VERIFICATION | [#63](https://github.com/COG-GTM/monolith-enterprise-application/pull/63) | 2026-08-26T21:05Z |
+| WS2 | Client slice incl. cache-aside repository + Client System REST call | [002-client-slice.spec.md](002-client-slice.spec.md) | [810f096a](https://app.devin.ai/sessions/810f096a209e4d60874a4b98d948fbad) | IN_VERIFICATION | [#66](https://github.com/COG-GTM/monolith-enterprise-application/pull/66) | 2026-08-26T21:05Z |
+| WS3 | Project slice incl. `EmployeeProject` join entities | [003-project-slice.spec.md](003-project-slice.spec.md) | [6fb8705b](https://app.devin.ai/sessions/6fb8705b3d364531af58272ca8a1ab47) | IN_PROGRESS (deviation 11 fix) | [#68](https://github.com/COG-GTM/monolith-enterprise-application/pull/68) | 2026-08-26T21:05Z |
+| WS4 | User slice (raw-SQL DAO equivalent) | [004-user-slice.spec.md](004-user-slice.spec.md) | [8db77d23](https://app.devin.ai/sessions/8db77d2354674246aaa56bde27672da3) | IN_VERIFICATION | [#67](https://github.com/COG-GTM/monolith-enterprise-application/pull/67) | 2026-08-26T21:05Z |
+| WS5 | AppInfo + management endpoints (`/app/info`, `/health`, `/cache/{name}/clear`) | [005-appinfo-management.spec.md](005-appinfo-management.spec.md) | [74a5b0fc](https://app.devin.ai/sessions/74a5b0fcb9654a118944e7909aa03f70) | IN_VERIFICATION | [#69](https://github.com/COG-GTM/monolith-enterprise-application/pull/69) | 2026-08-26T21:05Z |
+| WS6 | Messaging layer: payroll/invoice/notification ports, adapters, converters, DTOs | [006-messaging.spec.md](006-messaging.spec.md) | [b423672f](https://app.devin.ai/sessions/b423672f49ba470fbee4c4ff32806d71) | IN_PROGRESS (restack + drop WS0 stand-ins) | [#62](https://github.com/COG-GTM/monolith-enterprise-application/pull/62) | 2026-08-26T21:05Z |
+| WS7 | Caching + scheduling: `clientFindCache`, APScheduler reporting snapshot | [007-cache-scheduling.spec.md](007-cache-scheduling.spec.md) | [322fd820](https://app.devin.ai/sessions/322fd8202c354a6f96a49499b050749e) | IN_PROGRESS | [#64](https://github.com/COG-GTM/monolith-enterprise-application/pull/64) | 2026-08-26T21:05Z |
+| WS8 | Alembic migrations + seed data for the 4 Liquibase changelogs | [008-migrations-seed.spec.md](008-migrations-seed.spec.md) | [0f62f040](https://app.devin.ai/sessions/0f62f04063d44c4eb8362aba8b38cf0a) | IN_VERIFICATION | [#65](https://github.com/COG-GTM/monolith-enterprise-application/pull/65) | 2026-08-26T21:05Z |
 
 ### 2.1 Dependency graph
 
@@ -149,6 +154,9 @@ WS0 (foundation)  ── hard blocker for everything else
 | 2 | 2026-08-26T20:10Z | WS0 dispatched | Child session created via Devin API with spec path, Java refs, acceptance commands and boundary constraints | DELEGATED — awaiting PR |
 | 3 | 2026-08-26T20:35Z | WS1–WS8 dispatched | 8 child sessions created in one batch with a shared structured-output schema (`workstream`, `pr_url`, `session_url`, `files_changed`, `acceptance_results`, `deviations`, `status`); each prompt carries its spec path, Java source list, file-ownership constraints and acceptance commands | DELEGATED — awaiting PRs |
 | 4 | 2026-08-26T20:35Z | WS1–WS8 correction broadcast | WS0 had not landed when the siblings were dispatched (the user asked for parallel dispatch without waiting). All eight were told: branch off WS0's PR head branch once it opens, poll for it, and if it does not appear, create only the minimum WS0-owned files and list them at the top of the PR description | ACTION SENT — overlap to be resolved at merge time |
+| 5 | 2026-08-26T21:05Z | All nine children reported | Structured output reviewed for every workstream. Each child ran its own slice tests, `ruff check .`, `mypy snowman` and `create_app()`; WS8 additionally ran `alembic upgrade head` / `downgrade base` / `upgrade head`. Eight PRs opened (#61–#69). Cross-cutting findings: (a) WS1–WS5, WS7, WS8 correctly stacked on WS0's branch `devin/1787773226-ws0-foundation-fastapi`; (b) WS6 (#62) stayed on master with duplicate WS0-owned stand-ins; (c) WS2 created WS3-owned `resources/project.py` / `mappers/project.py` stand-ins; (d) WS2 and WS5 wired null-object cache stand-ins pending WS7; (e) WS3 surfaced the `POST /project/create` NOT NULL `client_id` contract gap | PARTIAL — per-slice checks pass in isolation; nothing verified integrated yet |
+| 6 | 2026-08-26T21:05Z | Defect dispatch + contract decision | WS6 asked to restack on WS0's branch and delete its 15 WS0-owned stand-ins; WS3 asked to implement deviation 11 (optional additive `ProjectResource.clientId`) so `POST /project/create` works. WS2's project stand-ins and both null-object cache adapters are resolved by the parent on the integration branch (WS3's files and WS7's real `TTLClientCache` win) | FIXES DISPATCHED |
+| 7 | 2026-08-26T21:05Z | Integration branch build | All eight branches merged onto WS0's branch with parent-decided conflict rules, then the full gate: `ruff check .`, `mypy snowman`, full `pytest`, `alembic upgrade head` on sqlite, `create_app()`, live `uvicorn` boot on port 8090 and per-endpoint curl checks against seeded data | IN PROGRESS |
 
 ---
 
