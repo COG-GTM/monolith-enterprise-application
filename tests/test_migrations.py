@@ -16,7 +16,19 @@ from snowman.config import get_settings
 from snowman.db.base import Base
 
 
-def _migration_config(database_url: str) -> Config:
+def _migration_config(
+    database_url: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> Config:
+    """Configure Alembic and redirect env.py's Settings-backed database URL.
+
+    alembic/env.py overrides ``sqlalchemy.url`` from ``Settings``, so setting
+    the environment variable is what actually redirects the migration chain;
+    the ini value is kept only for offline/``--sql`` use.
+    """
+
+    monkeypatch.setenv("SNOWMAN_DATABASE_URL", database_url)
+    get_settings.cache_clear()
     config = Config(str(Path(__file__).parents[1] / "alembic.ini"))
     config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
     return config
@@ -41,9 +53,7 @@ def _unexpected_diffs(diffs: list[object]) -> list[object]:
 @pytest.fixture
 def migrated_engine(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Engine:
     database_url = f"sqlite:///{tmp_path / 'migrations.db'}"
-    monkeypatch.setenv("SNOWMAN_DATABASE_URL", database_url)
-    get_settings.cache_clear()
-    config = _migration_config(database_url)
+    config = _migration_config(database_url, monkeypatch)
     command.upgrade(config, "head")
     engine = create_engine(database_url)
     yield engine
@@ -84,8 +94,6 @@ def test_migrations_schema_data_and_round_trip(
             assert count == expected_count
 
     database_url = migrated_engine.url.render_as_string(hide_password=False)
-    monkeypatch.setenv("SNOWMAN_DATABASE_URL", database_url)
-    get_settings.cache_clear()
-    config = _migration_config(database_url)
+    config = _migration_config(database_url, monkeypatch)
     command.downgrade(config, "base")
     command.upgrade(config, "head")
