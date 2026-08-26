@@ -21,11 +21,15 @@ async def _not_found_error_handler(_: Request, exc: Exception) -> JSONResponse:
 
 
 @asynccontextmanager
-async def _lifespan(application: FastAPI) -> AsyncIterator[None]:
-    """Manage optional infrastructure services."""
+async def _lifespan(_: FastAPI) -> AsyncIterator[None]:
+    """Manage optional infrastructure services.
+
+    WS7 owns the scheduler implementation. Until it is available, the enabled branch
+    intentionally remains a no-op while retaining the application lifecycle seam.
+    """
 
     if get_settings().scheduler_enabled:
-        start_scheduler(application)
+        start_scheduler(_)
     yield
     if get_settings().scheduler_enabled:
         shutdown_scheduler()
