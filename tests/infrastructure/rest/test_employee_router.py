@@ -2,7 +2,7 @@
 
 from sqlalchemy.orm import Session
 
-from snowman.domain.model.employee import EmployeeRole
+from snowman.domain.model.employee import Employee, EmployeeRole
 
 
 def _seed_role(db_session: Session) -> None:
@@ -44,6 +44,37 @@ def test_employee_endpoints_and_payload_contract(client, db_session: Session) ->
     assert delete_response.status_code == 200
     assert delete_response.content == b""
     assert client.get("/employee/1").status_code == 404
+
+
+def test_update_employee_without_role_clears_existing_role(
+    client,
+    db_session: Session,
+) -> None:
+    _seed_role(db_session)
+    db_session.add(
+        Employee(
+            id=2,
+            firstname="First",
+            surname="Surname",
+            employee_role_id=1,
+        )
+    )
+    db_session.flush()
+
+    response = client.post(
+        "/employee/update",
+        json={
+            "employeeId": 2,
+            "firstName": "Updated",
+            "secondName": "Surname",
+        },
+    )
+
+    assert response.status_code == 200
+    updated = db_session.get(Employee, 2)
+    assert updated is not None
+    assert updated.employee_role_id is None
+    assert updated.role is None
 
 
 def test_employee_unknown_endpoints_return_404(client) -> None:

@@ -68,6 +68,37 @@ def test_create_project_returns_empty_body_and_persists_changes(client, db_sessi
     }
 
 
+def test_create_projects_without_ids_assigns_distinct_nonzero_ids(client, db_session) -> None:
+    seed_project(db_session)
+
+    first_response = client.post(
+        "/project/create",
+        json={
+            "title": "Generated project one",
+            "dateStarted": "2024-01-01",
+            "clientId": 101,
+        },
+    )
+    second_response = client.post(
+        "/project/create",
+        json={
+            "title": "Generated project two",
+            "dateStarted": "2024-01-02",
+            "clientId": 101,
+        },
+    )
+
+    assert first_response.status_code == 200
+    assert second_response.status_code == 200
+    first = db_session.query(Project).filter_by(project_title="Generated project one").one()
+    second = db_session.query(Project).filter_by(project_title="Generated project two").one()
+    assert first.id > 0
+    assert second.id > 0
+    assert first.id != second.id
+    assert client.get(f"/project/{first.id}").json()["title"] == "Generated project one"
+    assert client.get(f"/project/{second.id}").json()["title"] == "Generated project two"
+
+
 def test_update_project_returns_empty_body_and_persists_changes(client, db_session) -> None:
     seed_project(db_session)
 

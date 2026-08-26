@@ -17,8 +17,11 @@ class SqlAlchemyProjectRepository:
         return self.session.get(Project, project_id)
 
     def save_project(self, project: Project) -> None:
-        self.session.merge(project)
+        if project.id == 0:
+            project.id = None  # type: ignore[assignment]
+        merged = self.session.merge(project)
         self.session.flush()
+        project.id = merged.id
 
     def remove_project(self, project_id: int) -> None:
         entity = self.find_project(project_id)

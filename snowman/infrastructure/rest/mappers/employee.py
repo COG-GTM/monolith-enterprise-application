@@ -23,7 +23,7 @@ def to_employee(resource: EmployeeResource) -> Employee:
         firstname=resource.firstName,
         surname=resource.secondName,
     )
-    # A null role would violate the employee_role NOT NULL column.
+    # Java's mapper only attaches a supplied role, and the nullable FK permits it.
     if resource.role is not None:
         employee.role = EmployeeRole(role=resource.role)
     return employee

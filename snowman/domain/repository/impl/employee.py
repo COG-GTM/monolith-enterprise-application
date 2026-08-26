@@ -26,7 +26,9 @@ class SqlAlchemyEmployeeRepository:
         SQLAlchemy merges the entity.
         """
 
-        if employee.role is not None and employee.role.id is None:
+        if employee.role is None:
+            employee.employee_role_id = None
+        elif employee.role.id is None:
             role_name = employee.role.role
             persistent_role = self._session.scalar(
                 select(EmployeeRole).where(EmployeeRole.role == role_name)
