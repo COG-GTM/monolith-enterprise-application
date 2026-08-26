@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from apscheduler.schedulers.background import BackgroundScheduler  # type: ignore[import-untyped]
 from apscheduler.triggers.interval import IntervalTrigger  # type: ignore[import-untyped]
@@ -39,7 +39,7 @@ def build_scheduler(settings: Settings | None = None) -> BackgroundScheduler:
             _run_reporting_snapshot,
             trigger=IntervalTrigger(
                 seconds=5,
-                start_date=datetime.now() + timedelta(seconds=1),
+                start_date=datetime.now(UTC) + timedelta(seconds=1),
             ),
             id="reportingSnapshotJob",
             max_instances=1,
@@ -60,10 +60,12 @@ def start_scheduler(app: FastAPI) -> None:
     app.state.reporting_scheduler = _scheduler
 
 
-def shutdown_scheduler() -> None:
+def shutdown_scheduler(app: FastAPI | None = None) -> None:
     """Stop the process-wide scheduler if it is running."""
 
     global _scheduler
     if _scheduler is not None:
         _scheduler.shutdown(wait=False)
         _scheduler = None
+    if app is not None:
+        app.state.reporting_scheduler = None

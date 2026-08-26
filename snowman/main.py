@@ -32,7 +32,7 @@ async def _lifespan(_: FastAPI) -> AsyncIterator[None]:
         start_scheduler(_)
     yield
     if get_settings().scheduler_enabled:
-        shutdown_scheduler()
+        shutdown_scheduler(_)
 
 
 def create_app() -> FastAPI:
