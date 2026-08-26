@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 from snowman.config import get_settings
 from snowman.domain.exception import BusinessError, EntityNotFoundError, SnowmanError
+from snowman.infrastructure.scheduling.scheduler import shutdown_scheduler, start_scheduler
 
 
 async def _business_error_handler(_: Request, exc: Exception) -> JSONResponse:
@@ -20,20 +21,14 @@ async def _not_found_error_handler(_: Request, exc: Exception) -> JSONResponse:
 
 
 @asynccontextmanager
-async def _lifespan(_: FastAPI) -> AsyncIterator[None]:
-    """Manage optional infrastructure services.
-
-    WS7 owns the scheduler implementation. Until it is available, the enabled branch
-    intentionally remains a no-op while retaining the application lifecycle seam.
-    """
+async def _lifespan(application: FastAPI) -> AsyncIterator[None]:
+    """Manage optional infrastructure services."""
 
     if get_settings().scheduler_enabled:
-        # WS7 will start the scheduler here.
-        pass
+        start_scheduler(application)
     yield
     if get_settings().scheduler_enabled:
-        # WS7 will stop the scheduler here.
-        pass
+        shutdown_scheduler()
 
 
 def create_app() -> FastAPI:
