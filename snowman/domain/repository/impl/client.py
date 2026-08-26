@@ -1,6 +1,7 @@
 """Port of `ClientRepositoryImpl.java` + `ClientDaoImpl.java`.
 
-The Spring cache annotations on `clientFindCache` become explicit cache-aside calls:
+The Spring cache annotations on `clientFindCache` become the explicit cache-aside calls spec R2.4
+pins (so `@CachePut` on the void `updateClient` stores the updated client, not Spring's `null`):
 
 | Java annotation | Port behavior |
 |---|---|
