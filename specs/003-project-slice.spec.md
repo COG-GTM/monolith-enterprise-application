@@ -72,16 +72,26 @@ class ProjectResource(BaseModel):
     title: str
     dateStarted: date | None = None
     dateEnded: date | None = None
+    clientId: int | None = None
 ```
 
 Field names as serialized by Java (`title`, not `projectTitle`). `java.util.Date` serializes to a
 date; use `datetime.date`. `ClientResource` (WS2) imports this model.
 
+`clientId` is **additive** and is [deviation 11](plan.md): Java's `ProjectResource` has no client
+field and `project.client_id` is `NOT NULL`, so without it `POST /project/create` cannot create a
+project. It is optional, so Java-shaped payloads that omit it stay valid, and it must not break
+`ClientResource`'s embedded projects.
+
 ### R3.3 Mapper — `snowman/infrastructure/rest/mappers/project.py`
 
 * `to_resource(project) -> ProjectResource`, `to_project(resource) -> Project`. Java's `mapToProject`
-  deliberately does **not** set the client (`//project.setClient`); the port also leaves `client`
-  unset — keep the comment explaining that the join is not part of the payload.
+  deliberately does **not** set the client (`//project.setClient`); keep the comment explaining that
+  the `client` *relationship* is not part of the payload. Per deviation 11, `to_project` sets
+  `client_id` from `resource.clientId` when it is not `None` and otherwise leaves it unset exactly as
+  Java does; `to_resource` populates `clientId` from `project.client_id`.
+* Acceptance: `POST /project/create` with a `clientId` referencing a seeded client persists the row;
+  a payload omitting `clientId` still round-trips through the mapper unchanged.
 * `to_projects(resources: Iterable[ProjectResource]) -> list[Project]` and
   `to_resources(projects: Iterable[Project]) -> list[ProjectResource]` (Java uses `Set`/`List`;
   Python uses lists, since `Project` is unhashable by value).
