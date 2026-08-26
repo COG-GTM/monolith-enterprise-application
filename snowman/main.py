@@ -46,6 +46,9 @@ def create_app() -> FastAPI:
 
     # --- routers ---
     # WS1–WS5 append exactly one app.include_router(...) line each here.
+    from snowman.infrastructure.rest.routers.user import router as user_router
+
+    application.include_router(user_router)
 
     return application
 
