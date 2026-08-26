@@ -2,7 +2,7 @@
 
 **Status:** IN PROGRESS
 **Owner:** parent/orchestrator Devin session — https://app.devin.ai/sessions/60fa76476c5f49e9b134d472db69873d
-**Last updated:** 2026-08-26T20:10Z
+**Last updated:** 2026-08-26T20:35Z
 **Specs PR:** https://github.com/COG-GTM/monolith-enterprise-application/pull/60
 
 This file is the SINGLE SOURCE OF TRUTH for the migration. The parent session owns all writes to
@@ -103,14 +103,14 @@ Statuses: `NOT_STARTED` / `DELEGATED` / `IN_PROGRESS` / `IN_VERIFICATION` / `DON
 | ID | Description | Spec | Child session | Status | PR | Last updated |
 |---|---|---|---|---|---|---|
 | WS0 | Foundation: packaging, settings, FastAPI app factory, SQLAlchemy base/session, Alembic init, messaging port base, pytest harness | [000-foundation.spec.md](000-foundation.spec.md) | [0d4e3a2f](https://app.devin.ai/sessions/0d4e3a2f72f44455a20a84d8ba55945d) | DELEGATED | — | 2026-08-26T20:10Z |
-| WS1 | Employee slice: model, resources, mapper, repository, service, router, tests | [001-employee-slice.spec.md](001-employee-slice.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
-| WS2 | Client slice incl. cache-aside repository + Client System REST call | [002-client-slice.spec.md](002-client-slice.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
-| WS3 | Project slice incl. `EmployeeProject` join entities | [003-project-slice.spec.md](003-project-slice.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
-| WS4 | User slice (raw-SQL DAO equivalent) | [004-user-slice.spec.md](004-user-slice.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
-| WS5 | AppInfo + management endpoints (`/app/info`, `/health`, `/cache/{name}/clear`) | [005-appinfo-management.spec.md](005-appinfo-management.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
-| WS6 | Messaging layer: payroll/invoice/notification ports, adapters, converters, DTOs | [006-messaging.spec.md](006-messaging.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
-| WS7 | Caching + scheduling: `clientFindCache`, APScheduler reporting snapshot | [007-cache-scheduling.spec.md](007-cache-scheduling.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
-| WS8 | Alembic migrations + seed data for the 4 Liquibase changelogs | [008-migrations-seed.spec.md](008-migrations-seed.spec.md) | — | NOT_STARTED | — | 2026-08-26T19:45Z |
+| WS1 | Employee slice: model, resources, mapper, repository, service, router, tests | [001-employee-slice.spec.md](001-employee-slice.spec.md) | [b950c348](https://app.devin.ai/sessions/b950c34830174b3fbc55ba2a352897ce) | DELEGATED | — | 2026-08-26T20:35Z |
+| WS2 | Client slice incl. cache-aside repository + Client System REST call | [002-client-slice.spec.md](002-client-slice.spec.md) | [810f096a](https://app.devin.ai/sessions/810f096a209e4d60874a4b98d948fbad) | DELEGATED | — | 2026-08-26T20:35Z |
+| WS3 | Project slice incl. `EmployeeProject` join entities | [003-project-slice.spec.md](003-project-slice.spec.md) | [6fb8705b](https://app.devin.ai/sessions/6fb8705b3d364531af58272ca8a1ab47) | DELEGATED | — | 2026-08-26T20:35Z |
+| WS4 | User slice (raw-SQL DAO equivalent) | [004-user-slice.spec.md](004-user-slice.spec.md) | [8db77d23](https://app.devin.ai/sessions/8db77d2354674246aaa56bde27672da3) | DELEGATED | — | 2026-08-26T20:35Z |
+| WS5 | AppInfo + management endpoints (`/app/info`, `/health`, `/cache/{name}/clear`) | [005-appinfo-management.spec.md](005-appinfo-management.spec.md) | [74a5b0fc](https://app.devin.ai/sessions/74a5b0fcb9654a118944e7909aa03f70) | DELEGATED | — | 2026-08-26T20:35Z |
+| WS6 | Messaging layer: payroll/invoice/notification ports, adapters, converters, DTOs | [006-messaging.spec.md](006-messaging.spec.md) | [b423672f](https://app.devin.ai/sessions/b423672f49ba470fbee4c4ff32806d71) | DELEGATED | — | 2026-08-26T20:35Z |
+| WS7 | Caching + scheduling: `clientFindCache`, APScheduler reporting snapshot | [007-cache-scheduling.spec.md](007-cache-scheduling.spec.md) | [322fd820](https://app.devin.ai/sessions/322fd8202c354a6f96a49499b050749e) | DELEGATED | — | 2026-08-26T20:35Z |
+| WS8 | Alembic migrations + seed data for the 4 Liquibase changelogs | [008-migrations-seed.spec.md](008-migrations-seed.spec.md) | [0f62f040](https://app.devin.ai/sessions/0f62f04063d44c4eb8362aba8b38cf0a) | DELEGATED | — | 2026-08-26T20:35Z |
 
 ### 2.1 Dependency graph
 
@@ -131,6 +131,10 @@ WS0 (foundation)  ── hard blocker for everything else
   conflicts, **WS0 lands minimal model stubs for every entity** (all columns/relationships as
   specified in [001](001-employee-slice.spec.md)–[004](004-user-slice.spec.md)); WS1–WS4 then
   refine only their own model file, and WS6–WS8 import the models without editing them.
+* **Dispatch deviation (2026-08-26T20:35Z):** the original plan was to wait for WS0 to merge before
+  dispatching WS1–WS8. At the user's request all eight siblings were dispatched while WS0 was still
+  running, so each was instructed to stack on WS0's PR branch and, failing that, to create only the
+  minimum WS0-owned files and declare them. The parent resolves any duplicate scaffolding at merge.
 * **File ownership:** each workstream only creates/edits files listed in its spec's *Files owned*
   section. `snowman/main.py` router/scheduler registration is the one shared file; each child
   appends its own include/registration line and must rebase on `master` before pushing.
@@ -143,6 +147,8 @@ WS0 (foundation)  ── hard blocker for everything else
 |---|---|---|---|---|
 | 1 | 2026-08-26T20:10Z | Specs authored (plan + WS0–WS8) | Spec completeness review against the Java tree: every model, service, endpoint, mapper, messaging port/adapter/DTO, cache, scheduler and Liquibase changeset is claimed by exactly one workstream; *Files owned* sections are disjoint | PASS — specs PR #60 opened |
 | 2 | 2026-08-26T20:10Z | WS0 dispatched | Child session created via Devin API with spec path, Java refs, acceptance commands and boundary constraints | DELEGATED — awaiting PR |
+| 3 | 2026-08-26T20:35Z | WS1–WS8 dispatched | 8 child sessions created in one batch with a shared structured-output schema (`workstream`, `pr_url`, `session_url`, `files_changed`, `acceptance_results`, `deviations`, `status`); each prompt carries its spec path, Java source list, file-ownership constraints and acceptance commands | DELEGATED — awaiting PRs |
+| 4 | 2026-08-26T20:35Z | WS1–WS8 correction broadcast | WS0 had not landed when the siblings were dispatched (the user asked for parallel dispatch without waiting). All eight were told: branch off WS0's PR head branch once it opens, poll for it, and if it does not appear, create only the minimum WS0-owned files and list them at the top of the PR description | ACTION SENT — overlap to be resolved at merge time |
 
 ---
 
