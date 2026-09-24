@@ -1,4 +1,4 @@
 language: java
-install: "mvn clean install -U -Dliquibase.should.run=false"
+install: "mvn clean install -U -Dliquibase.skip=true"
 jdk:
-   - oraclejdk8
+   - openjdk11
