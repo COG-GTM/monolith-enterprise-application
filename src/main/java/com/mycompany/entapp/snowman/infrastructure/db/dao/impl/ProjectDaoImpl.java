@@ -24,6 +24,7 @@ public class ProjectDaoImpl extends AbstractHibernateDao implements ProjectDao {
 
     @Override
     public void removeProject(int projectId) {
-        getCurrentSession().delete(projectId);
+        Project project = (Project) getCurrentSession().load(Project.class, projectId);
+        getCurrentSession().delete(project);
     }
 }

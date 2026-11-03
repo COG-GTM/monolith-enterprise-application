@@ -6,6 +6,7 @@
 package com.mycompany.entapp.snowman.infrastructure.rest.mappers;
 
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.ProjectResource;
+import com.mycompany.entapp.snowman.domain.model.Client;
 import com.mycompany.entapp.snowman.domain.model.Project;
 
 import java.util.ArrayList;
@@ -24,7 +25,11 @@ public final class ProjectResourceMapper {
         project.setProjectTitle(projectResource.getTitle());
         project.setDateStarted(projectResource.getDateStarted());
         project.setDateEnded(projectResource.getDateEnded());
-        //project.setClient
+        if (projectResource.getClientId() != null) {
+            Client client = new Client();
+            client.setId(projectResource.getClientId());
+            project.setClient(client);
+        }
         return project;
     }
 
@@ -34,6 +39,9 @@ public final class ProjectResourceMapper {
         projectResource.setTitle(project.getProjectTitle());
         projectResource.setDateStarted(project.getDateStarted());
         projectResource.setDateEnded(project.getDateEnded());
+        if (project.getClient() != null) {
+            projectResource.setClientId(project.getClient().getId());
+        }
         return projectResource;
     }
 
