@@ -6,7 +6,7 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet id="1" author="Colin">
+    <changeSet id="1" author="Colin" context="dev">
         <comment>Insert dummy users</comment>
         <sql>
             insert into user values (1, 'username', 'password', 'username@email.com', 'user first name', 'user second name');

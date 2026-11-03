@@ -127,13 +127,23 @@ wasn't necessary required to be provided with specific JavaEE dependencies from 
 Database updates are implemented using patches via changesets with a database migration tool in [liquibase](http://www.liquibase.org/)
 to execute them in order to 'patch' up the database.
 
-To run, execute the maven liquibase plugin by...
+Migrations are not part of the normal build (`mvn package` does not touch the database); run them as an
+explicit deployment step with the maven liquibase plugin.
 
-Running update patches:
+Running update patches (defaults to the `prod` context):
 
 ```xml
 mvn liquibase:update
 ```
+
+The dummy users in `004_Insert_Dummy_Users.xml` have well-known plain text passwords and are only applied in
+the `dev` context, for local development databases:
+
+```xml
+mvn liquibase:update -Dliquibase.contexts=dev
+```
+
+In the `prod` context, `005_Remove_Dummy_Users.xml` deletes those accounts from databases that older builds seeded.
 
 And to rollback those particular patches:
 

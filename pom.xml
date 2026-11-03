@@ -26,6 +26,7 @@
         <h2.version>2.1.210</h2.version>
         <derby.version>10.11.1.1</derby.version>
         <mysql.version>8.0.16</mysql.version>
+        <liquibase.contexts>prod</liquibase.contexts>
         <slf4j.api.version>1.7.25</slf4j.api.version>
         <hibernate.core.version>5.4.24.Final</hibernate.core.version>
         <hibernate.entitymanager.version>4.3.10.Final</hibernate.entitymanager.version>
@@ -327,15 +328,8 @@
                 <version>3.0.5</version>
                 <configuration>
                     <propertyFile>src/main/resources/db/liquibase.properties</propertyFile>
+                    <contexts>${liquibase.contexts}</contexts>
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>update</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
         </plugins>
