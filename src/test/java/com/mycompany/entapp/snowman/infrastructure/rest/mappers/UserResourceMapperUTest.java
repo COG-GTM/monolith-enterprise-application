@@ -63,7 +63,7 @@ public class UserResourceMapperUTest {
 
         assertEquals(userId, userResource.getUserId());
         assertEquals(username, userResource.getUsername());
-        assertEquals(password, userResource.getPassword());
+        assertNull(userResource.getPassword());
         assertEquals(email, userResource.getEmail());
         assertEquals(firstName, userResource.getFirstName());
         assertEquals(secondName, userResource.getSecondName());

@@ -18,7 +18,7 @@ import java.sql.SQLException;
 @Repository
 public class UserDaoImpl implements UserDao {
 
-    private static final String GET_USER_WITH_USERID_QUERY = "SELECT * FROM user where id = ?";
+    private static final String GET_USER_WITH_USERID_QUERY = "SELECT id, username, email, firstname, secondname FROM user where id = ?";
 
     private static final String DELETE_USER_WITH_USERID = "DELETE FROM user where id = ?";
 
@@ -34,9 +34,8 @@ public class UserDaoImpl implements UserDao {
                 User user = new User();
                 user.setUserId(rs.getInt("id"));
                 user.setFirstname(rs.getString("firstname"));
-                user.setLastname(rs.getString("lastname"));
+                user.setLastname(rs.getString("secondname"));
                 user.setUsername(rs.getString("username"));
-                user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
                 return user;
             }

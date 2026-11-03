@@ -50,6 +50,18 @@ backend web service.
 1. Start up MySQL Server 
 2. run `run.sh` script
 
+The `/user` endpoints require HTTP Basic credentials of an administrator and return `401` otherwise
+(including when no administrator is configured). Configure it through the environment, storing only a hash:
+
+```
+echo -n 'choose-a-strong-password' | java -cp target/Snowman-jar-with-dependencies.jar \
+    com.mycompany.entapp.snowman.infrastructure.security.PasswordHasher
+export SNOWMAN_ADMIN_USERNAME=admin
+export SNOWMAN_ADMIN_PASSWORD_HASH='pbkdf2_sha256$310000$...'
+```
+
+Serve the application behind TLS: Basic credentials are only base64-encoded on the wire.
+
 ### <a name="architecture"></a>Software Architecture
 
 Instead of using a Layered Architecture where you commonly have 3 layers with one directional flow, this project showcase

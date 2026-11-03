@@ -5,10 +5,13 @@
  */
 package com.mycompany.entapp.snowman.infrastructure.rest.resources;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UserResource {
     private int userId;
     private String username;
-    private String password; //TODO password shouldn't be raw string
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
     private String email;
     private String firstName;
     private String secondName;

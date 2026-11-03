@@ -9,9 +9,11 @@ import com.mycompany.entapp.snowman.domain.model.User;
 import com.mycompany.entapp.snowman.infrastructure.db.dao.UserDao;
 import com.mycompany.entapp.snowman.domain.service.UserService;
 import com.mycompany.entapp.snowman.infrastructure.rest.mappers.UserResourceMapper;
+import com.mycompany.entapp.snowman.infrastructure.security.PasswordHasher;
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.UserResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -21,6 +23,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplUTest {
@@ -57,6 +60,29 @@ public class UserServiceImplUTest {
     }
 
     @Test
+    public void createUserStoresHashedPassword() {
+        User user = getUser(1);
+
+        userService.createUser(user);
+
+        ArgumentCaptor<User> saved = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userDao).saveUser(saved.capture());
+        assertTrue(PasswordHasher.isHash(saved.getValue().getPassword()));
+        assertTrue(PasswordHasher.matches("Password", saved.getValue().getPassword()));
+    }
+
+    @Test
+    public void updateUserStoresHashedPassword() {
+        User user = getUser(1);
+
+        userService.updateUser(user);
+
+        ArgumentCaptor<User> saved = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userDao).saveUser(saved.capture());
+        assertTrue(PasswordHasher.matches("Password", saved.getValue().getPassword()));
+    }
+
+    @Test
     public void testUpdateUser() {
         User user = getUser(1);
 
@@ -76,7 +102,7 @@ public class UserServiceImplUTest {
 
         userService.deleteUser(userId);
 
-        Mockito.verify(userService, Mockito.times(1)).deleteUser(userId);
+        Mockito.verify(userDao, Mockito.times(1)).removeUser(userId);
     }
 
     private User getUser(int userId) {
