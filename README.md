@@ -16,6 +16,7 @@
 - [Caching](#caching)
 - [Uber Jar](#uber-jar)
 - [Embedded Jetty](#embedded-jetty)
+- [API Authentication](#api-authentication)
 - [Database Migration](#database-migration)
 - [Scalability](#scalability)
 - [Clustering](#clustering)
@@ -121,6 +122,29 @@ or a Web/JSP Container (Tomcat, Jetty, UnderTow), we embed a HTTP listener into 
 
 All dependencies are bundled/packaged together in an Uber jar file so it works. This means it is therefore
 wasn't necessary required to be provided with specific JavaEE dependencies from the JavaEE platform.
+
+### <a name="api-authentication"></a>API Authentication
+
+Controllers annotated with `@RequiresApiRole` require a bearer token
+(`Authorization: Bearer <token>`), checked by `ApiTokenAuthorizationInterceptor`
+(see `META-INF/application-context-security.xml`). Tokens are read from the environment
+(or `-D` system properties) and must be at least 32 characters:
+
+| Variable                   | Role     | Grants                                  |
+|----------------------------|----------|-----------------------------------------|
+| `SNOWMAN_ADMIN_API_TOKEN`  | `ADMIN`  | everything, incl. client create/update/delete |
+| `SNOWMAN_READER_API_TOKEN` | `READER` | read-only endpoints (e.g. `GET /client/{id}`) |
+
+A missing or unknown token gets `401`, a reader token on an admin endpoint gets `403`.
+If a token is not set, its role cannot authenticate, so protected endpoints fail closed.
+The two tokens must be different (identical tokens are rejected), and must only be sent over TLS:
+the embedded Jetty connector is plain HTTP, so terminate HTTPS in front of it (load balancer / reverse proxy)
+and don't expose port 8090 directly.
+
+```bash
+export SNOWMAN_ADMIN_API_TOKEN=$(openssl rand -hex 32)
+curl -X DELETE -H "Authorization: Bearer $SNOWMAN_ADMIN_API_TOKEN" http://localhost:8090/client/7
+```
 
 ### <a name="database-migration"></a>Database Migration
 
