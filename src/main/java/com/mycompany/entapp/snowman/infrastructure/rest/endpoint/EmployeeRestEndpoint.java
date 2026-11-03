@@ -9,6 +9,8 @@ import com.mycompany.entapp.snowman.domain.model.Employee;
 import com.mycompany.entapp.snowman.domain.service.EmployeeService;
 import com.mycompany.entapp.snowman.infrastructure.rest.mappers.EmployeeResourceMapper;
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.EmployeeResource;
+import com.mycompany.entapp.snowman.infrastructure.security.ApiRole;
+import com.mycompany.entapp.snowman.infrastructure.security.RequiresRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/employee")
+@RequiresRole(ApiRole.VIEWER)
 public class EmployeeRestEndpoint {
 
     @Autowired
@@ -32,6 +35,7 @@ public class EmployeeRestEndpoint {
         return ResponseEntity.ok(employeeResource);
     }
 
+    @RequiresRole(ApiRole.ADMIN)
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity createEmployee(@Valid EmployeeResource employeeResource) {
         Employee employee = EmployeeResourceMapper.mapEmployeeResourceToEmployee(employeeResource);
@@ -39,6 +43,7 @@ public class EmployeeRestEndpoint {
         return ResponseEntity.ok().build();
     }
 
+    @RequiresRole(ApiRole.ADMIN)
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity updateExistingEmployee(@Valid EmployeeResource employeeResource){
         Employee employee = EmployeeResourceMapper.mapEmployeeResourceToEmployee(employeeResource);
@@ -46,6 +51,7 @@ public class EmployeeRestEndpoint {
         return ResponseEntity.ok().build();
     }
 
+    @RequiresRole(ApiRole.ADMIN)
     @RequestMapping(value = "{employeeId}/delete", method = RequestMethod.DELETE)
     public ResponseEntity deleteExistingEmployee(@PathVariable Integer employeeId){
         employeeService.deleteEmployee(employeeId);

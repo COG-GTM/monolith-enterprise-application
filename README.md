@@ -16,6 +16,7 @@
 - [Caching](#caching)
 - [Uber Jar](#uber-jar)
 - [Embedded Jetty](#embedded-jetty)
+- [API Security](#api-security)
 - [Database Migration](#database-migration)
 - [Scalability](#scalability)
 - [Clustering](#clustering)
@@ -121,6 +122,24 @@ or a Web/JSP Container (Tomcat, Jetty, UnderTow), we embed a HTTP listener into 
 
 All dependencies are bundled/packaged together in an Uber jar file so it works. This means it is therefore
 wasn't necessary required to be provided with specific JavaEE dependencies from the JavaEE platform.
+
+### <a name="api-security"></a>API Security
+
+Endpoints annotated with `@RequiresRole` (currently `/employee/**`) require HTTP Basic credentials. `GET /employee/{id}`
+needs the `VIEWER` or `ADMIN` role; create, update and delete need `ADMIN`. Missing or wrong credentials get `401`, an
+authenticated caller without the role gets `403`.
+
+Accounts are read from environment variables (or `-D` system properties); there are no defaults, and with none set every
+protected request is rejected:
+
+```
+export SNOWMAN_SECURITY_ADMIN_USERNAME=...    # snowman.security.admin.username
+export SNOWMAN_SECURITY_ADMIN_PASSWORD=...    # snowman.security.admin.password
+export SNOWMAN_SECURITY_VIEWER_USERNAME=...   # snowman.security.viewer.username (optional)
+export SNOWMAN_SECURITY_VIEWER_PASSWORD=...   # snowman.security.viewer.password (optional)
+```
+
+Basic credentials are only protected in transit when the service sits behind TLS.
 
 ### <a name="database-migration"></a>Database Migration
 

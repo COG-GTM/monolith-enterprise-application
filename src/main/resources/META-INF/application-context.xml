@@ -22,6 +22,26 @@
 
     <mvc:annotation-driven validator="validator"/>
 
+    <!-- enforces @RequiresRole with HTTP Basic credentials; accounts with blank credentials are disabled -->
+    <mvc:interceptors>
+        <bean class="com.mycompany.entapp.snowman.infrastructure.security.RoleAuthorizationInterceptor">
+            <constructor-arg>
+                <list>
+                    <bean class="com.mycompany.entapp.snowman.infrastructure.security.ApiAccount">
+                        <constructor-arg index="0" value="${snowman.security.admin.username:}"/>
+                        <constructor-arg index="1" value="${snowman.security.admin.password:}"/>
+                        <constructor-arg index="2" value="ADMIN"/>
+                    </bean>
+                    <bean class="com.mycompany.entapp.snowman.infrastructure.security.ApiAccount">
+                        <constructor-arg index="0" value="${snowman.security.viewer.username:}"/>
+                        <constructor-arg index="1" value="${snowman.security.viewer.password:}"/>
+                        <constructor-arg index="2" value="VIEWER"/>
+                    </bean>
+                </list>
+            </constructor-arg>
+        </bean>
+    </mvc:interceptors>
+
     <!-- properties source -->
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">
