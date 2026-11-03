@@ -22,6 +22,16 @@
 
     <mvc:annotation-driven validator="validator"/>
 
+    <!-- management endpoints require the management API token -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/cache/**"/>
+            <bean class="com.mycompany.entapp.snowman.infrastructure.management.security.ManagementAuthenticationInterceptor">
+                <constructor-arg value="${management.api.token:}"/>
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
     <!-- properties source -->
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">
