@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!-- Removes the default accounts that older builds seeded into every environment, even if their password was changed. -->
+    <changeSet id="1" author="snowman" context="prod">
+        <comment>Remove dummy users seeded with default credentials</comment>
+        <sql>
+            delete from user where
+                (id = 1 and username = 'username' and email = 'username@email.com') or
+                (id = 2 and username = 'admin' and email = 'admin@email.com') or
+                (id = 3 and username = 'test' and email = 'test@email.com') or
+                (id = 4 and username = 'dev' and email = 'dev@email.com');
+        </sql>
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>
