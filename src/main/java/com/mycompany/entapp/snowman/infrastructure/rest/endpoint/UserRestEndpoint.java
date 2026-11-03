@@ -9,6 +9,7 @@ import com.mycompany.entapp.snowman.domain.model.User;
 import com.mycompany.entapp.snowman.domain.service.UserService;
 import com.mycompany.entapp.snowman.infrastructure.rest.mappers.UserResourceMapper;
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.UserResource;
+import com.mycompany.entapp.snowman.infrastructure.rest.security.AdminOnly;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +47,7 @@ public class UserRestEndpoint {
         return ResponseEntity.ok().build();
     }
 
+    @AdminOnly
     @RequestMapping(value = "{userId}/delete", method = RequestMethod.DELETE)
     public ResponseEntity deleteUser(@PathVariable Integer userId) {
         userService.deleteUser(userId);

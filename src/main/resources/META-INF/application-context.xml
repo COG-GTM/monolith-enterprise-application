@@ -22,6 +22,10 @@
 
     <mvc:annotation-driven validator="validator"/>
 
+    <mvc:interceptors>
+        <ref bean="adminAuthorizationInterceptor"/>
+    </mvc:interceptors>
+
     <!-- properties source -->
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">

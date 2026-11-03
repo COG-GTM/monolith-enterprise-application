@@ -9,6 +9,7 @@ import com.mycompany.entapp.snowman.domain.model.User;
 import com.mycompany.entapp.snowman.domain.service.impl.UserServiceImpl;
 import com.mycompany.entapp.snowman.infrastructure.rest.mappers.UserResourceMapper;
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.UserResource;
+import com.mycompany.entapp.snowman.infrastructure.rest.security.AdminOnly;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -21,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(PowerMockRunner.class)
@@ -112,5 +114,10 @@ public class UserRestEndpointUTest {
         classInTest.deleteUser(userId);
 
         Mockito.verify(userService, Mockito.times(1)).deleteUser(userId);
+    }
+
+    @Test
+    public void deleteUserRequiresAdministrator() throws NoSuchMethodException {
+        assertNotNull(UserRestEndpoint.class.getMethod("deleteUser", Integer.class).getAnnotation(AdminOnly.class));
     }
 }
