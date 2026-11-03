@@ -22,6 +22,17 @@
 
     <mvc:annotation-driven validator="validator"/>
 
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/user"/>
+            <mvc:mapping path="/user/**"/>
+            <bean class="com.mycompany.entapp.snowman.infrastructure.security.AdminAuthenticationInterceptor">
+                <constructor-arg index="0" value="${snowman.admin.username:}"/>
+                <constructor-arg index="1" value="${snowman.admin.password.hash:}"/>
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
     <!-- properties source -->
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">

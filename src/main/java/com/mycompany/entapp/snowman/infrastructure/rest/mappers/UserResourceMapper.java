@@ -27,7 +27,6 @@ public final class UserResourceMapper {
         UserResource userResource = new UserResource();
         userResource.setUserId(user.getUserId());
         userResource.setUsername(user.getUsername());
-        userResource.setPassword(user.getPassword());
         userResource.setEmail(user.getEmail());
         userResource.setFirstName(user.getFirstname());
         userResource.setSecondName(user.getLastname());

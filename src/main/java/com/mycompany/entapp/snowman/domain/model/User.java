@@ -106,7 +106,6 @@ public class User {
         return new ToStringBuilder(this)
             .append("userId", userId)
             .append("username", username)
-            .append("password", password)
             .append("email", email)
             .append("firstname", firstname)
             .append("lastname", lastname)
