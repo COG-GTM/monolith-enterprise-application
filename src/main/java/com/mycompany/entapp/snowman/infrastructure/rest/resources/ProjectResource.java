@@ -13,6 +13,7 @@ public class ProjectResource {
     private String title;
     private Date dateStarted;
     private Date dateEnded;
+    private Integer clientId;
 
     public int getProjectId() {
         return projectId;
@@ -44,5 +45,13 @@ public class ProjectResource {
 
     public void setDateEnded(Date dateEnded) {
         this.dateEnded = dateEnded;
+    }
+
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
     }
 }

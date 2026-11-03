@@ -42,12 +42,24 @@ public class ProjectRestEndpointUTest {
         projectResource.setProjectId(1);
         projectResource.setTitle("Title");
         projectResource.setDateStarted(new DateTime(2018, 1,1, 12, 0, 0).toDate());
+        projectResource.setClientId(1);
 
         Mockito.doNothing().when(projectService).createProject(Matchers.any(Project.class));
 
         ResponseEntity<?> response = classUnderTest.createProject(projectResource);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testCreateProjectWithoutClientIdIsBadRequest() {
+        ProjectResource projectResource = new ProjectResource();
+        projectResource.setTitle("Title");
+
+        ResponseEntity<?> response = classUnderTest.createProject(projectResource);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Mockito.verify(projectService, Mockito.never()).createProject(Matchers.any(Project.class));
     }
 
     @Test
@@ -86,11 +98,12 @@ public class ProjectRestEndpointUTest {
         projectResource.setTitle("Title");
         projectResource.setDateStarted(new DateTime(2018, 1,1, 12, 0, 0).toDate());
 
-        Mockito.doNothing().when(projectService).createProject(Matchers.any(Project.class));
+        Mockito.doNothing().when(projectService).updateProject(Matchers.any(Project.class));
 
         ResponseEntity<?> response = classUnderTest.updateProject(projectResource);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        Mockito.verify(projectService).updateProject(Matchers.any(Project.class));
     }
 
 }

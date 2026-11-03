@@ -10,14 +10,17 @@ import com.mycompany.entapp.snowman.domain.repository.ProjectRepository;
 import com.mycompany.entapp.snowman.domain.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private ProjectRepository projectRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Project getProject(int projectId) {
         return projectRepository.findProject(projectId);
     }
@@ -34,7 +37,13 @@ public class ProjectServiceImpl implements ProjectService {
             throw new RuntimeException("Can't update an unknown project " + project);
         }
 
-        projectRepository.saveProject(project);
+        existingProject.setProjectTitle(project.getProjectTitle());
+        existingProject.setDateStarted(project.getDateStarted());
+        existingProject.setDateEnded(project.getDateEnded());
+        if (project.getClient() != null) {
+            existingProject.setClient(project.getClient());
+        }
+        projectRepository.saveProject(existingProject);
     }
 
     @Override
