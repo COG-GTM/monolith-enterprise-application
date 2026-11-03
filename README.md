@@ -57,6 +57,10 @@ Configure them with the `SNOWMAN_ADMIN_USERNAME` / `SNOWMAN_ADMIN_PASSWORD` envi
 `snowman.admin.username` / `snowman.admin.password` system properties). If they are not set, those endpoints are
 disabled and return `403`; missing or wrong credentials return `401`.
 
+The embedded Jetty listener speaks plain HTTP, and HTTP Basic sends the password in every request. Only call
+administrator endpoints from the same host, or put the service behind a TLS-terminating reverse proxy and never
+expose port 8090 directly.
+
 ```
 SNOWMAN_ADMIN_USERNAME=ops SNOWMAN_ADMIN_PASSWORD='<strong password>' ./run.sh
 curl -X DELETE -u "ops:<strong password>" http://localhost:8090/user/4/delete
