@@ -356,7 +356,7 @@
             </properties>
         </profile>
         <profile>
-            <id>liquibase-db-credentials-from-env</id>
+            <id>liquibase-db-username-from-env</id>
             <activation>
                 <property>
                     <name>env.SNOWMAN_DB_USERNAME</name>
@@ -364,6 +364,16 @@
             </activation>
             <properties>
                 <liquibase.username>${env.SNOWMAN_DB_USERNAME}</liquibase.username>
+            </properties>
+        </profile>
+        <profile>
+            <id>liquibase-db-password-from-env</id>
+            <activation>
+                <property>
+                    <name>env.SNOWMAN_DB_PASSWORD</name>
+                </property>
+            </activation>
+            <properties>
                 <liquibase.password>${env.SNOWMAN_DB_PASSWORD}</liquibase.password>
             </properties>
         </profile>
