@@ -95,8 +95,8 @@ public class ProjectRestEndpointSecurityUTest {
 
     @Test
     public void testReadWriteTokenReachesHandlers() throws Exception {
-        mockMvc.perform(post("/project/create").param("title", "x").header("Authorization", READ_WRITE))
-            .andExpect(status().isOk());
+        mockMvc.perform(post("/project/create").param("title", "x").param("clientId", "1")
+            .header("Authorization", READ_WRITE)).andExpect(status().isOk());
         mockMvc.perform(post("/project/update").param("projectId", "5").param("title", "y")
             .header("Authorization", READ_WRITE)).andExpect(status().isOk());
         mockMvc.perform(delete("/project/5/delete").header("Authorization", READ_WRITE))

@@ -38,6 +38,9 @@ public class ProjectRestEndpoint {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<?> createProject(@Valid ProjectResource projectResource) {
+        if (projectResource.getClientId() == null) {
+            return ResponseEntity.badRequest().body("clientId is required");
+        }
         Project project = ProjectResourceMapper.mapToProject(projectResource);
         projectService.createProject(project);
         return ResponseEntity.ok().build();

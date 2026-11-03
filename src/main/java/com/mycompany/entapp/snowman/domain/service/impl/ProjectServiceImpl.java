@@ -37,7 +37,13 @@ public class ProjectServiceImpl implements ProjectService {
             throw new RuntimeException("Can't update an unknown project " + project);
         }
 
-        projectRepository.saveProject(project);
+        existingProject.setProjectTitle(project.getProjectTitle());
+        existingProject.setDateStarted(project.getDateStarted());
+        existingProject.setDateEnded(project.getDateEnded());
+        if (project.getClient() != null) {
+            existingProject.setClient(project.getClient());
+        }
+        projectRepository.saveProject(existingProject);
     }
 
     @Override

@@ -6,6 +6,7 @@
 package com.mycompany.entapp.snowman.domain.service.impl;
 
 import com.mycompany.entapp.snowman.domain.ProjectTestHelper;
+import com.mycompany.entapp.snowman.domain.model.Client;
 import com.mycompany.entapp.snowman.domain.model.Project;
 import com.mycompany.entapp.snowman.domain.repository.ProjectRepository;
 import org.junit.Test;
@@ -63,6 +64,25 @@ public class ProjectServiceImplUTest {
 
         Mockito.verify(projectRepository, Mockito.times(1)).findProject(existingProject.getId());
         Mockito.verify(projectRepository, Mockito.times(1)).saveProject(existingProject);
+    }
+
+    @Test
+    public void testUpdateProjectCopiesChangesOntoExistingProject() {
+        Project existingProject = ProjectTestHelper.getProject();
+        Client client = new Client();
+        existingProject.setClient(client);
+        Project update = new Project();
+        update.setId(existingProject.getId());
+        update.setProjectTitle("Revised");
+
+        Mockito.when(projectRepository.findProject(existingProject.getId())).thenReturn(existingProject);
+
+        classUnderTest.updateProject(update);
+
+        assertEquals("Revised", existingProject.getProjectTitle());
+        assertSame(client, existingProject.getClient());
+        Mockito.verify(projectRepository).saveProject(existingProject);
+        Mockito.verify(projectRepository, Mockito.never()).saveProject(update);
     }
 
     @Test

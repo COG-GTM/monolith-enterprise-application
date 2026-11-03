@@ -8,10 +8,13 @@ package com.mycompany.entapp.snowman.infrastructure.db.dao.impl;
 import com.mycompany.entapp.snowman.domain.model.Project;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -25,12 +28,17 @@ public class ProjectDaoImplUTest {
     @Mock
     private Session session;
 
+    @Mock
+    private Query query;
+
     @InjectMocks
     private ProjectDaoImpl classUnderTest;
 
     @Before
     public void setUp() {
         Mockito.when(sessionFactory.getCurrentSession()).thenReturn(session);
+        Mockito.when(session.createQuery(Matchers.anyString())).thenReturn(query);
+        Mockito.when(query.setParameter(Matchers.anyString(), Matchers.any())).thenReturn(query);
     }
 
     @Test
@@ -41,6 +49,10 @@ public class ProjectDaoImplUTest {
 
         classUnderTest.removeProject(5);
 
-        Mockito.verify(session).delete(project);
+        InOrder inOrder = Mockito.inOrder(session, query);
+        inOrder.verify(session).createQuery("delete from EmployeeProject ep where ep.project.id = :projectId");
+        inOrder.verify(query).setParameter("projectId", 5);
+        inOrder.verify(query).executeUpdate();
+        inOrder.verify(session).delete(project);
     }
 }
