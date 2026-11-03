@@ -1,9 +1,10 @@
+CREATE DATABASE IF NOT EXISTS snowman;
+
 CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
 
-GRANT ALL PRIVILEGES ON * . * TO 'user'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX, REFERENCES
+    ON snowman.* TO 'username'@'localhost';
 
 FLUSH PRIVILEGES;
 
-CREATE DATABASE SNOWMAN;
-
-USE SNOWMAN;
+USE snowman;
