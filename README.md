@@ -48,7 +48,15 @@ backend web service.
  
  
 1. Start up MySQL Server 
-2. run `run.sh` script
+2. Create the application account with a strong, unique password (see `src/main/resources/db/scripts/init-db.sql`)
+3. Export the database credentials (they are not stored in the repository or the jar):
+   ```
+   export SNOWMAN_DB_USERNAME=snowman_app
+   export SNOWMAN_DB_PASSWORD='<strong unique password>'
+   # optional, defaults to jdbc:mysql://localhost:3306/snowman?createDatabaseIfNotExist=true
+   export SNOWMAN_DB_URL=jdbc:mysql://dbhost:3306/snowman
+   ```
+4. run `run.sh` script
 
 ### <a name="architecture"></a>Software Architecture
 
@@ -128,6 +136,11 @@ Database updates are implemented using patches via changesets with a database mi
 to execute them in order to 'patch' up the database.
 
 To run, execute the maven liquibase plugin by...
+
+Liquibase uses the same `SNOWMAN_DB_URL` / `SNOWMAN_DB_USERNAME` / `SNOWMAN_DB_PASSWORD` environment
+variables as the application (or `-Dliquibase.url` / `-Dliquibase.username` / `-Dliquibase.password`), so
+migrations always target the database the application connects to. Without `SNOWMAN_DB_URL` it falls back
+to the URL in `src/main/resources/db/liquibase.properties`.
 
 Running update patches:
 
