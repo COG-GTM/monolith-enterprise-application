@@ -137,8 +137,10 @@ to execute them in order to 'patch' up the database.
 
 To run, execute the maven liquibase plugin by...
 
-Liquibase reads the database credentials from the `SNOWMAN_DB_USERNAME` / `SNOWMAN_DB_PASSWORD`
-environment variables (or `-Dliquibase.username` / `-Dliquibase.password`).
+Liquibase uses the same `SNOWMAN_DB_URL` / `SNOWMAN_DB_USERNAME` / `SNOWMAN_DB_PASSWORD` environment
+variables as the application (or `-Dliquibase.url` / `-Dliquibase.username` / `-Dliquibase.password`), so
+migrations always target the database the application connects to. Without `SNOWMAN_DB_URL` it falls back
+to the URL in `src/main/resources/db/liquibase.properties`.
 
 Running update patches:
 

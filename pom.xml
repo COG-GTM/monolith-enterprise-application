@@ -26,8 +26,6 @@
         <h2.version>2.1.210</h2.version>
         <derby.version>10.11.1.1</derby.version>
         <mysql.version>8.0.16</mysql.version>
-        <liquibase.username>${env.SNOWMAN_DB_USERNAME}</liquibase.username>
-        <liquibase.password>${env.SNOWMAN_DB_PASSWORD}</liquibase.password>
         <slf4j.api.version>1.7.25</slf4j.api.version>
         <hibernate.core.version>5.4.24.Final</hibernate.core.version>
         <hibernate.entitymanager.version>4.3.10.Final</hibernate.entitymanager.version>
@@ -342,5 +340,33 @@
 
         </plugins>
     </build>
+
+    <!-- Point Liquibase at the same database/account as the application when the env vars are set;
+         otherwise it falls back to db/liquibase.properties and -Dliquibase.* -->
+    <profiles>
+        <profile>
+            <id>liquibase-db-url-from-env</id>
+            <activation>
+                <property>
+                    <name>env.SNOWMAN_DB_URL</name>
+                </property>
+            </activation>
+            <properties>
+                <liquibase.url>${env.SNOWMAN_DB_URL}</liquibase.url>
+            </properties>
+        </profile>
+        <profile>
+            <id>liquibase-db-credentials-from-env</id>
+            <activation>
+                <property>
+                    <name>env.SNOWMAN_DB_USERNAME</name>
+                </property>
+            </activation>
+            <properties>
+                <liquibase.username>${env.SNOWMAN_DB_USERNAME}</liquibase.username>
+                <liquibase.password>${env.SNOWMAN_DB_PASSWORD}</liquibase.password>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
