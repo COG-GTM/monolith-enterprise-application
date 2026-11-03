@@ -50,6 +50,22 @@ backend web service.
 1. Start up MySQL Server 
 2. run `run.sh` script
 
+#### Administrator endpoints
+
+Destructive endpoints (currently `DELETE /user/{userId}/delete`) require HTTP Basic administrator credentials.
+Configure them with the `SNOWMAN_ADMIN_USERNAME` / `SNOWMAN_ADMIN_PASSWORD` environment variables (or the
+`snowman.admin.username` / `snowman.admin.password` system properties). If they are not set, those endpoints are
+disabled and return `403`; missing or wrong credentials return `401`.
+
+The embedded Jetty listener speaks plain HTTP, and HTTP Basic sends the password in every request. Only call
+administrator endpoints from the same host, or put the service behind a TLS-terminating reverse proxy and never
+expose port 8090 directly.
+
+```
+SNOWMAN_ADMIN_USERNAME=ops SNOWMAN_ADMIN_PASSWORD='<strong password>' ./run.sh
+curl -X DELETE -u "ops:<strong password>" http://localhost:8090/user/4/delete
+```
+
 ### <a name="architecture"></a>Software Architecture
 
 Instead of using a Layered Architecture where you commonly have 3 layers with one directional flow, this project showcase
