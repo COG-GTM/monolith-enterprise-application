@@ -106,6 +106,11 @@ public class ApiTokenAuthorizationInterceptor implements HandlerInterceptor {
         if (token == null) {
             return null;
         }
+        if (adminTokenDigest != null && readerTokenDigest != null
+            && MessageDigest.isEqual(adminTokenDigest, readerTokenDigest)) {
+            LOG.error("The admin and reader API tokens are identical; rejecting both until they differ");
+            return null;
+        }
         byte[] presented = sha256(token);
         if (adminTokenDigest != null && MessageDigest.isEqual(adminTokenDigest, presented)) {
             return ApiRole.ADMIN;

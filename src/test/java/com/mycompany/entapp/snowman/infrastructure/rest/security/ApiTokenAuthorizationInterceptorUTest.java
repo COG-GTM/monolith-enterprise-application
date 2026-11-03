@@ -124,6 +124,17 @@ public class ApiTokenAuthorizationInterceptorUTest {
     }
 
     @Test
+    public void testIdenticalAdminAndReaderTokensFailClosed() throws Exception {
+        ApiTokenAuthorizationInterceptor misconfigured = new ApiTokenAuthorizationInterceptor();
+        misconfigured.setAdminToken(ADMIN_TOKEN);
+        misconfigured.setReaderToken(ADMIN_TOKEN);
+
+        assertFalse(misconfigured.preHandle(request("DELETE", "Bearer " + ADMIN_TOKEN), response, deleteHandler()));
+
+        Mockito.verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+    }
+
+    @Test
     public void testUnannotatedHandlersAreNotAffected() throws Exception {
         HandlerMethod health = new HandlerMethod(new HealthCheckRestEndpoint(), "checkStatus");
 

@@ -137,6 +137,9 @@ Controllers annotated with `@RequiresApiRole` require a bearer token
 
 A missing or unknown token gets `401`, a reader token on an admin endpoint gets `403`.
 If a token is not set, its role cannot authenticate, so protected endpoints fail closed.
+The two tokens must be different (identical tokens are rejected), and must only be sent over TLS:
+the embedded Jetty connector is plain HTTP, so terminate HTTPS in front of it (load balancer / reverse proxy)
+and don't expose port 8090 directly.
 
 ```bash
 export SNOWMAN_ADMIN_API_TOKEN=$(openssl rand -hex 32)
