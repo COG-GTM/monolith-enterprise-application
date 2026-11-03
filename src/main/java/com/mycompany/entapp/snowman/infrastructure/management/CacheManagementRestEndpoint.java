@@ -36,7 +36,7 @@ public class CacheManagementRestEndpoint {
     private ClientCacheService clientCacheService;
 
     @RequestMapping(value = "/{cacheName}/clear", method = RequestMethod.POST)
-    public ResponseEntity<CacheManagementResource> clearClientCache(@PathVariable String cacheName){
+    public ResponseEntity<CacheManagementResource> clearClientCache(@PathVariable("cacheName") String cacheName){
         if (!CLEARABLE_CACHES.contains(cacheName)) {
             LOGGER.warn("Rejected request to clear an unknown cache");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
