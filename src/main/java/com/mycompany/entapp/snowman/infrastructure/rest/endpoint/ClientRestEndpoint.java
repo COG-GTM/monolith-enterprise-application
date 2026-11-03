@@ -10,6 +10,8 @@ import com.mycompany.entapp.snowman.infrastructure.rest.mappers.ClientResourceMa
 import com.mycompany.entapp.snowman.infrastructure.rest.resources.ClientResource;
 import com.mycompany.entapp.snowman.domain.model.Client;
 import com.mycompany.entapp.snowman.domain.service.ClientService;
+import com.mycompany.entapp.snowman.infrastructure.rest.security.ApiRole;
+import com.mycompany.entapp.snowman.infrastructure.rest.security.RequiresApiRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/client")
+@RequiresApiRole(ApiRole.READER)
 public class ClientRestEndpoint {
 
     @Autowired
@@ -32,6 +35,7 @@ public class ClientRestEndpoint {
         return ResponseEntity.ok(clientResource);
     }
 
+    @RequiresApiRole(ApiRole.ADMIN)
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public void createClientInfo(@RequestBody ClientResource clientResource) {
         Client client = ClientResourceMapper.mapToClient(clientResource);
@@ -42,6 +46,7 @@ public class ClientRestEndpoint {
         }
     }
 
+    @RequiresApiRole(ApiRole.ADMIN)
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public void updateClientInfo(@RequestBody ClientResource clientResource) {
         Client client = ClientResourceMapper.mapToClient(clientResource);
@@ -52,6 +57,7 @@ public class ClientRestEndpoint {
         }
     }
 
+    @RequiresApiRole(ApiRole.ADMIN)
     @RequestMapping(value = "/{clientId}", method = RequestMethod.DELETE)
     public void deleteClientInfo(@PathVariable("clientId") Integer clientId) {
         try {
